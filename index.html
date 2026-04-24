@@ -645,8 +645,6 @@
   <script src="keys.js?v=3"></script>
   <script src="auth.js?v=3"></script>
   <script>
-    if (isUnlocked()) launchCloaked();
-
     // Secret entrance 1: triple-click teapot logo
     let logoClicks = 0, logoTimer = null;
     document.getElementById('logoBtn').addEventListener('click', () => {
