@@ -18,6 +18,16 @@
     Content-Type = "application/octet-stream"
 
 [[headers]]
-  for = "/**/*.br"
+  for = "/**/*.wasm.br"
+  [headers.values]
+    Content-Type = "application/wasm"
+
+[[headers]]
+  for = "/**/*.data.br"
   [headers.values]
     Content-Type = "application/octet-stream"
+
+[[headers]]
+  for = "/**/*.js.br"
+  [headers.values]
+    Content-Type = "application/javascript"
