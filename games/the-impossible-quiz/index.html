@@ -2,10 +2,86 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}ruffle-player{width:100%;height:100%;display:block}</style>
-  <script src="../../js/ruffle/ruffle.js"></script>
+  <style>
+    html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}
+    ruffle-player{width:100%;height:100%;display:block}
+    #debug{position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font:12px/1.5 monospace;padding:8px 10px;z-index:9999;max-height:50vh;overflow-y:auto;pointer-events:none}
+    #debug b{color:#ff0}
+    #debug .err{color:#f55}
+    #debug .ok{color:#5f5}
+  </style>
 </head>
 <body>
-  <ruffle-player src="Build/impossiblequiz.swf" width="100%" height="100%"></ruffle-player>
+  <div id="debug"><b>🔍 Ruffle Debug</b><br></div>
+  <ruffle-player id="rufflePlayer" src="Build/impossiblequiz.swf" width="100%" height="100%"></ruffle-player>
+
+  <script>
+    var dbg = document.getElementById('debug');
+    function log(msg, cls) {
+      var line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.innerHTML = msg;
+      dbg.appendChild(line);
+    }
+
+    // Show script URL being loaded
+    log('Page: ' + window.location.href);
+    log('Ruffle script: ' + (document.currentScript ? document.currentScript.src : 'unknown'));
+
+    // Catch JS errors
+    window.onerror = function(msg, src, line, col, err) {
+      log('❌ JS Error: ' + msg + '<br>  at ' + src + ':' + line, 'err');
+      return false;
+    };
+
+    window.addEventListener('unhandledrejection', function(e) {
+      log('❌ Unhandled Promise: ' + (e.reason || e), 'err');
+    });
+  </script>
+
+  <script src="../../js/ruffle/ruffle.js" onerror="log('❌ ruffle.js FAILED to load — check path: ../../js/ruffle/ruffle.js', 'err')"></script>
+
+  <script>
+    // Check if Ruffle loaded
+    setTimeout(function() {
+      if (typeof window.RufflePlayer === 'undefined') {
+        log('❌ window.RufflePlayer is UNDEFINED — ruffle.js did not define it', 'err');
+      } else {
+        log('✅ window.RufflePlayer exists', 'ok');
+      }
+
+      // Check SWF path
+      var swfUrl = new URL('Build/impossiblequiz.swf', window.location.href).href;
+      log('SWF URL: ' + swfUrl);
+
+      // Try fetching the SWF to see if it's accessible
+      fetch(swfUrl, {method:'HEAD'}).then(function(r){
+        log((r.ok ? '✅' : '❌') + ' SWF HEAD: HTTP ' + r.status + ' ' + r.statusText + (r.ok ? '' : ' — FILE NOT FOUND'), r.ok ? 'ok' : 'err');
+      }).catch(function(e){
+        log('❌ SWF fetch error: ' + e, 'err');
+      });
+
+      // Check ruffle wasm/chunk URLs by looking at loaded scripts
+      var scripts = Array.from(document.scripts).map(function(s){ return s.src; }).filter(Boolean);
+      log('Scripts loaded: ' + scripts.length);
+      scripts.forEach(function(s){ log('  • ' + s.split('/').slice(-1)[0]); });
+
+      // Check wasm MIME via a known ruffle wasm file
+      var ruffleBase = '../../js/ruffle/';
+      var absoluteBase = new URL(ruffleBase, window.location.href).href;
+      log('Ruffle base URL: ' + absoluteBase);
+    }, 2000);
+
+    // Monitor ruffle player events
+    document.addEventListener('DOMContentLoaded', function() {
+      var player = document.getElementById('rufflePlayer');
+      if (!player) { log('❌ ruffle-player element missing', 'err'); return; }
+      log('✅ ruffle-player element found');
+
+      player.addEventListener('loadedmetadata', function() { log('✅ Ruffle: loadedmetadata', 'ok'); });
+      player.addEventListener('load', function() { log('✅ Ruffle: load event', 'ok'); });
+      player.addEventListener('error', function(e) { log('❌ Ruffle player error: ' + JSON.stringify(e.detail || e.message || 'unknown'), 'err'); });
+    });
+  </script>
 </body>
 </html>
