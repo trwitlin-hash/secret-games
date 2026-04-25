@@ -1,97 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <style>
-    html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}
-    ruffle-player{width:100%;height:100%;display:block}
-    #debug{position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;font:11px/1.5 monospace;padding:6px 10px;z-index:9999;max-height:70vh;overflow-y:auto;pointer-events:none}
-    #debug b{color:#ff0}
-    #debug .err{color:#f55}
-    #debug .ok{color:#5f5}
-    #debug .warn{color:#fa0}
-    #debug .info{color:#8cf}
-  </style>
+  <style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}object,embed{width:100%;height:100%;display:block}</style>
+  <script src="/js/ruffle/ruffle.js"></script>
 </head>
 <body>
-  <div id="debug"><b>🔍 Ruffle Debug v3</b><br></div>
-  <ruffle-player id="rufflePlayer" src="Build/impossiblequiz.swf" width="100%" height="100%"></ruffle-player>
-
-  <script>
-    var dbg = document.getElementById('debug');
-    function log(msg, cls) {
-      var line = document.createElement('div');
-      if (cls) line.className = cls;
-      line.innerHTML = msg;
-      dbg.appendChild(line);
-    }
-
-    window.onerror = function(msg, src, line) {
-      log('❌ JS Error: ' + msg + ' @ ' + src.split('/').slice(-1)[0] + ':' + line, 'err');
-    };
-    window.addEventListener('unhandledrejection', function(e) {
-      log('❌ Promise rejection: ' + (e.reason || e), 'err');
-    });
-
-    // ── Intercept Worker creation ──────────────────────────────────
-    var _Worker = window.Worker;
-    window.Worker = function(url, opts) {
-      log('🔧 Worker created: ' + url, 'info');
-      var w = new _Worker(url, opts);
-      w.addEventListener('error', function(e) {
-        log('❌ Worker error: ' + (e.message || JSON.stringify(e)), 'err');
-      });
-      return w;
-    };
-    window.Worker.prototype = _Worker.prototype;
-
-    // ── Intercept fetch to see what Ruffle loads ───────────────────
-    var _fetch = window.fetch;
-    window.fetch = function() {
-      var url = (arguments[0] && arguments[0].url) || arguments[0] || '';
-      if (url && (String(url).includes('ruffle') || String(url).includes('.wasm') || String(url).includes('.swf'))) {
-        log('📡 fetch: ' + String(url).split('/').slice(-1)[0], 'info');
-      }
-      return _fetch.apply(this, arguments).then(function(r) {
-        if (!r.ok && (String(url).includes('ruffle') || String(url).includes('.wasm') || String(url).includes('.swf'))) {
-          log('❌ fetch failed: ' + url + ' → ' + r.status, 'err');
-        }
-        return r;
-      });
-    };
-
-    // ── Intercept customElements.define ───────────────────────────
-    var _define = customElements.define.bind(customElements);
-    customElements.define = function(name, cls, opts) {
-      log('🧩 customElements.define: ' + name, 'ok');
-      return _define(name, cls, opts);
-    };
-  </script>
-
-  <script src="../../js/ruffle/ruffle.js" onerror="log('❌ ruffle.js FAILED to load', 'err')"></script>
-
-  <script>
-    log('✅ ruffle.js script tag executed');
-
-    setTimeout(function() {
-      log('--- 1s ---', 'warn');
-      var ce = customElements.get('ruffle-player');
-      log('customElements.get(ruffle-player): ' + (ce ? '✅ defined' : '❌ NOT defined'), ce ? 'ok' : 'err');
-    }, 1000);
-
-    setTimeout(function() {
-      log('--- 5s ---', 'warn');
-      var ce = customElements.get('ruffle-player');
-      log('ruffle-player registered: ' + (ce ? 'YES' : 'NO'), ce ? 'ok' : 'err');
-      var p = document.getElementById('rufflePlayer');
-      log('player.readyState: ' + p.readyState);
-      log('player.__ruffle__: ' + (p.__ruffle__ ? 'present' : 'absent'));
-      // Try to read Ruffle's internal state
-      try {
-        var keys = Object.getOwnPropertyNames(Object.getPrototypeOf(p));
-        log('player prototype keys: ' + keys.slice(0,10).join(', '), 'info');
-      } catch(e) { log('prototype read error: ' + e, 'err'); }
-    }, 5000);
-  </script>
+  <object width="100%" height="100%">
+    <param name="movie" value="Build/impossiblequiz.swf">
+    <embed src="Build/impossiblequiz.swf" width="100%" height="100%">
+  </object>
 </body>
 </html>

@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}ruffle-player{width:100%;height:100%;display:block}</style>
-  <script src="../../../js/ruffle/ruffle.js"></script>
+  <style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}object,embed{width:100%;height:100%;display:block}</style>
+  <script src="/js/ruffle/ruffle.js"></script>
 </head>
 <body>
-  <ruffle-player src="Build/grow_rpg.swf" width="100%" height="100%"></ruffle-player>
+  <object width="100%" height="100%">
+    <param name="movie" value="Build/grow_rpg.swf">
+    <embed src="Build/grow_rpg.swf" width="100%" height="100%">
+  </object>
 </body>
 </html>
