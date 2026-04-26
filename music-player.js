@@ -1,5 +1,5 @@
 // Lao Wang Tea Shop — Traditional Chinese Music Player (YouTube-backed)
-// Persists across page navigation via sessionStorage
+// Persists track, position, and play state across page navigation via sessionStorage
 (function () {
   'use strict';
 
@@ -19,22 +19,26 @@
     { id: 'MjOBUoZqJlw', title: '古韵悠然', label: 'Ancient Chinese Ambient' },
   ];
 
-  // ── State ────────────────────────────────────────────────────────────
-  let ytPlayer   = null;
-  let apiReady   = false;
-  let currentIdx = 0;
-  let isPlaying  = false;
-  let isExpanded = false;
-  let eqInterval = null;
-  let resumeOnReady = false; // should we auto-play once API loads?
+  // ── State ─────────────────────────────────────────────────────────────
+  let ytPlayer      = null;
+  let apiReady      = false;
+  let currentIdx    = 0;
+  let isPlaying     = false;
+  let isExpanded    = false;
+  let eqInterval    = null;
+  let posInterval   = null; // saves position every second while playing
+  let resumeOnReady = false;
+  let resumePos     = 0;    // seconds to seek to on resume
 
-  // ── sessionStorage persistence ───────────────────────────────────────
+  // ── sessionStorage ────────────────────────────────────────────────────
   function saveState() {
     try {
+      const pos = (ytPlayer && apiReady) ? (ytPlayer.getCurrentTime() || 0) : resumePos;
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        idx:     currentIdx,
-        playing: isPlaying,
-        open:    isExpanded,
+        idx:      currentIdx,
+        playing:  isPlaying,
+        open:     isExpanded,
+        position: pos,
       }));
     } catch (e) {}
   }
@@ -42,13 +46,24 @@
   function loadState() {
     try {
       const s = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
-      if (typeof s.idx === 'number') currentIdx = s.idx;
-      if (s.open) isExpanded = true;
+      if (typeof s.idx === 'number')      currentIdx = s.idx;
+      if (typeof s.position === 'number') resumePos  = s.position;
+      if (s.open)    isExpanded = true;
       return s.playing === true;
     } catch (e) { return false; }
   }
 
-  // ── YouTube IFrame API ───────────────────────────────────────────────
+  // Tick every second while playing to keep position fresh
+  function startPosSave() {
+    if (posInterval) return;
+    posInterval = setInterval(saveState, 1000);
+  }
+  function stopPosSave() {
+    clearInterval(posInterval);
+    posInterval = null;
+  }
+
+  // ── YouTube IFrame API ────────────────────────────────────────────────
   function loadYTAPI() {
     if (document.getElementById('yt-api-script')) return;
     const s = document.createElement('script');
@@ -77,8 +92,10 @@
         onReady: function (e) {
           e.target.setVolume(40);
           if (resumeOnReady) {
-            // small delay so browser doesn't block autoplay
-            setTimeout(function() { e.target.playVideo(); }, 400);
+            if (resumePos > 0) {
+              e.target.seekTo(resumePos, true);
+            }
+            setTimeout(function () { e.target.playVideo(); }, 300);
           }
         },
         onStateChange: function (e) {
@@ -90,9 +107,10 @@
     });
   };
 
-  // ── Playback ─────────────────────────────────────────────────────────
+  // ── Playback ──────────────────────────────────────────────────────────
   function loadTrack(idx) {
     currentIdx = ((idx % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
+    resumePos  = 0; // new track = start from beginning
     if (ytPlayer && apiReady) {
       ytPlayer.loadVideoById(PLAYLIST[currentIdx].id);
     }
@@ -116,28 +134,30 @@
     if (playing) {
       eq && eq.classList.remove('eq-paused');
       if (!eqInterval) eqInterval = setInterval(animateEq, 150);
+      startPosSave();
     } else {
       eq && eq.classList.add('eq-paused');
       clearInterval(eqInterval); eqInterval = null;
+      stopPosSave();
+      saveState(); // save position at the moment of pause
     }
-    saveState();
   }
 
   function refreshTrackInfo() {
-    const t = PLAYLIST[currentIdx];
-    const el = function(id) { return document.getElementById(id); };
+    const t  = PLAYLIST[currentIdx];
+    const el = function (id) { return document.getElementById(id); };
     if (el('mp-title')) el('mp-title').textContent = t.title;
     if (el('mp-label')) el('mp-label').textContent = t.label;
     if (el('mp-num'))   el('mp-num').textContent   = (currentIdx + 1) + ' / ' + PLAYLIST.length;
   }
 
   function animateEq() {
-    document.querySelectorAll('#mp-eq span').forEach(function(b) {
+    document.querySelectorAll('#mp-eq span').forEach(function (b) {
       b.style.height = (4 + Math.random() * 18) + 'px';
     });
   }
 
-  // ── Build UI ─────────────────────────────────────────────────────────
+  // ── Build UI ──────────────────────────────────────────────────────────
   function buildUI() {
     const css = document.createElement('style');
     css.textContent = `
@@ -244,28 +264,25 @@
       '<button id="mp-fab" title="Traditional Chinese Music 🎵">🎵</button>';
     document.body.appendChild(wrap);
 
-    // Restore open state
-    if (isExpanded) {
-      document.getElementById('mp-panel').classList.add('mp-open');
-    }
+    if (isExpanded) document.getElementById('mp-panel').classList.add('mp-open');
 
     // Events
-    document.getElementById('mp-fab').addEventListener('click', function() {
+    document.getElementById('mp-fab').addEventListener('click', function () {
       isExpanded = !isExpanded;
       document.getElementById('mp-panel').classList.toggle('mp-open', isExpanded);
       saveState();
     });
     document.getElementById('mp-play-btn').addEventListener('click', togglePlay);
-    document.getElementById('mp-prev-btn').addEventListener('click', function() { advanceTrack(-1); });
-    document.getElementById('mp-next-btn').addEventListener('click', function() { advanceTrack(1); });
-    document.getElementById('mp-vol').addEventListener('input', function(e) {
+    document.getElementById('mp-prev-btn').addEventListener('click', function () { advanceTrack(-1); });
+    document.getElementById('mp-next-btn').addEventListener('click', function () { advanceTrack(1); });
+    document.getElementById('mp-vol').addEventListener('input', function (e) {
       if (ytPlayer && apiReady) ytPlayer.setVolume(parseInt(e.target.value));
     });
   }
 
-  // ── Init ─────────────────────────────────────────────────────────────
+  // ── Init ──────────────────────────────────────────────────────────────
   function init() {
-    resumeOnReady = loadState(); // true if music was playing before navigation
+    resumeOnReady = loadState();
     buildUI();
     loadYTAPI();
   }
