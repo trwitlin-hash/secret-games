@@ -137,12 +137,6 @@
   <script src="keys.js?v=3"></script>
   <script src="auth.js?v=3"></script>
   <script>
-    // If already unlocked from a previous same-session entry, go straight to games
-    if (isUnlocked()) {
-      sessionStorage.setItem('sgCloakToken', '1');
-      location.replace('loading.html');
-    }
-
     const input  = document.getElementById('keyInput');
     const btn    = document.getElementById('nextBtn');
     const errMsg = document.getElementById('errMsg');
