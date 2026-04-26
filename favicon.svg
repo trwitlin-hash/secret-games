@@ -1,4 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="10" fill="#8b0000"/>
-  <text x="32" y="47" font-size="40" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">🫖</text>
+  <rect width="64" height="64" rx="8" fill="#8b0000"/>
+  <!-- teapot body -->
+  <ellipse cx="30" cy="38" rx="18" ry="14" fill="#ffd700"/>
+  <!-- teapot lid -->
+  <rect x="18" y="24" width="24" height="5" rx="2.5" fill="#ffd700"/>
+  <ellipse cx="30" cy="22" rx="5" ry="3" fill="#ffd700"/>
+  <!-- spout -->
+  <path d="M48 34 Q58 30 56 40 Q54 44 48 42 Z" fill="#ffd700"/>
+  <!-- handle -->
+  <path d="M12 32 Q2 32 2 40 Q2 48 12 44" stroke="#ffd700" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- steam lines -->
+  <path d="M24 18 Q26 12 24 8" stroke="#ffecaa" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M30 16 Q32 10 30 6" stroke="#ffecaa" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M36 18 Q38 12 36 8" stroke="#ffecaa" stroke-width="2" fill="none" stroke-linecap="round"/>
 </svg>
