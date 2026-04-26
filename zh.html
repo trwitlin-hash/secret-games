@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>老王茶叶店 — 福建省最好的茶!</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/svg+xml" sizes="16x16" href="favicon-16.svg">
+  <style>
+    body { margin:0; background-color:#f7e8c8; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a060' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); font-family:Georgia,'Times New Roman',serif; color:#3a1a00; }
+    .top-banner { background:#8b0000; color:#ffd700; text-align:center; padding:6px; font-size:13px; letter-spacing:1px; border-bottom:3px double #ffd700; }
+    .header { background:#8b0000; border-bottom:5px double #ffd700; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .logo-area { text-align:center; line-height:1; }
+    .logo { font-size:52px; cursor:default; user-select:none; display:block; filter:drop-shadow(2px 2px 0px rgba(0,0,0,0.4)); }
+    .logo:active { transform:scale(0.9); }
+    .shop-name-cn { font-size:28px; color:#ffd700; font-weight:bold; text-shadow:1px 1px 0 #5a0000,2px 2px 0 #3a0000; letter-spacing:4px; display:block; }
+    .shop-name-en { font-size:13px; color:#ffecaa; letter-spacing:1px; display:block; margin-top:2px; }
+    .shop-tagline { font-size:11px; color:#ffc080; display:block; font-style:italic; margin-top:3px; }
+    .header-right { text-align:right; color:#ffecaa; font-size:12px; line-height:1.9; }
+    .header-right strong { color:#ffd700; }
+    .navbar { background:#6b0000; border-bottom:2px solid #ffd700; border-top:2px solid #ffd700; padding:0; display:flex; flex-wrap:wrap; }
+    .navbar a { color:#ffd700; text-decoration:none; padding:8px 18px; font-size:13px; border-right:1px solid rgba(255,215,0,0.3); display:inline-block; }
+    .navbar a:hover { background:rgba(255,215,0,0.15); }
+    .navbar a.active { background:rgba(255,215,0,0.2); font-weight:bold; }
+    .marquee-bar { background:#fff8e8; border-bottom:1px dashed #c89040; padding:5px 0; overflow:hidden; white-space:nowrap; font-size:12px; color:#8b3a00; }
+    .marquee-inner { display:inline-block; animation:scroll-left 30s linear infinite; }
+    @keyframes scroll-left { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+    .main-wrap { max-width:960px; margin:18px auto; padding:0 12px; display:flex; gap:16px; align-items:flex-start; }
+    .sidebar { width:190px; flex-shrink:0; }
+    .sidebar-box { border:2px solid #8b3a00; background:#fffbf0; margin-bottom:14px; }
+    .sidebar-box-title { background:#8b0000; color:#ffd700; font-size:12px; font-weight:bold; padding:4px 8px; letter-spacing:1px; text-align:center; border-bottom:1px solid #ffd700; }
+    .sidebar-box-content { padding:10px; font-size:12px; line-height:2.0; color:#3a1a00; }
+    .sidebar-box-content a { color:#8b0000; text-decoration:none; display:block; }
+    .sidebar-box-content a:hover { text-decoration:underline; color:#c00; }
+    .content { flex:1; min-width:0; }
+    .welcome-box { border:3px double #8b3a00; background:#fffbf0; padding:18px 22px; margin-bottom:16px; text-align:center; }
+    .welcome-box h1 { font-size:22px; color:#8b0000; margin-bottom:6px; }
+    .welcome-box .cn-sub { font-size:16px; color:#a05010; letter-spacing:3px; margin-bottom:10px; }
+    .welcome-box p { font-size:13px; color:#5a2a00; line-height:1.9; text-align:left; }
+    .red-divider { border:none; border-top:2px solid #8b0000; margin:10px 0; }
+    .section-heading { background:#8b0000; color:#ffd700; font-size:13px; font-weight:bold; padding:5px 10px; letter-spacing:2px; margin:0 0 10px 0; border-left:5px solid #ffd700; }
+    .product-table { width:100%; border-collapse:collapse; margin-bottom:16px; font-size:13px; }
+    .product-table th { background:#6b0000; color:#ffd700; padding:7px 10px; text-align:left; border:1px solid #8b3a00; font-weight:bold; }
+    .product-table td { padding:8px 10px; border:1px solid #c8a060; background:#fffbf0; vertical-align:top; }
+    .product-table tr:nth-child(even) td { background:#fff5dc; }
+    .tea-emoji { font-size:22px; }
+    .tea-name { font-weight:bold; color:#6b0000; }
+    .tea-name-cn { font-size:11px; color:#a05010; display:block; }
+    .price { color:#8b0000; font-weight:bold; white-space:nowrap; }
+    .gallery-box { border:2px solid #8b3a00; background:#fffbf0; padding:12px; margin-bottom:16px; }
+    .gallery-box img { width:100%; height:180px; object-fit:cover; display:block; margin-bottom:8px; }
+    .gallery-row { display:flex; gap:8px; }
+    .gallery-row img { flex:1; height:110px; object-fit:cover; }
+    footer { background:#3a0a00; border-top:4px double #ffd700; color:#c8a060; padding:18px 20px; font-size:12px; text-align:center; line-height:2.2; }
+    footer a { color:#ffd700; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+    .footer-cn { font-size:11px; color:#8b6040; margin-top:4px; }
+    #authOverlay { display:none; position:fixed; inset:0; background:rgba(20,0,0,0.78); z-index:9999; align-items:center; justify-content:center; }
+    #authOverlay.active { display:flex; }
+    #authBox { background:#fffbf0; border:3px double #8b0000; padding:30px 32px 26px; width:340px; max-width:90vw; text-align:center; position:relative; box-shadow:4px 4px 20px rgba(0,0,0,0.5); }
+    #authBox .modal-top { font-size:28px; margin-bottom:8px; }
+    #authBox h2 { font-size:16px; color:#8b0000; margin-bottom:2px; }
+    #authBox .modal-cn { font-size:12px; color:#a05010; letter-spacing:2px; margin-bottom:18px; }
+    #authInput { width:100%; padding:9px 12px; border:2px solid #8b3a00; font-size:14px; font-family:monospace; background:#fffbf0; color:#3a1a00; text-align:center; letter-spacing:2px; outline:none; margin-bottom:12px; box-sizing:border-box; }
+    #authInput:focus { border-color:#8b0000; }
+    #authBtn { width:100%; padding:9px; background:#8b0000; color:#ffd700; border:none; font-size:14px; font-weight:bold; cursor:pointer; letter-spacing:2px; }
+    #authBtn:hover { background:#6b0000; }
+    #authError { font-size:12px; color:#cc0000; margin-top:8px; min-height:16px; }
+    #authClose { position:absolute; top:8px; right:10px; background:none; border:none; font-size:16px; color:#8b3a00; cursor:pointer; font-weight:bold; }
+    #authClose:hover { color:#8b0000; }
+  </style>
+</head>
+<body>
+
+  <div class="top-banner">
+    🎋 欢迎光临老王茶叶店！ &nbsp;|&nbsp; 满¥200包邮！ &nbsp;|&nbsp; ☎ (0591) 8823-4471 &nbsp;|&nbsp; 微信: laowangcha
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-area">
+        <span class="logo" id="logoBtn">🍵</span>
+      </div>
+      <div>
+        <span class="shop-name-cn">老王茶叶店</span>
+        <span class="shop-name-en">LAO WANG TEA SHOP</span>
+        <span class="shop-tagline">三代家业 · 1962年创立 · 福州市中山路47号</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <strong>📍 地址：</strong>福州市鼓楼区中山路47号<br>
+      <strong>⏰ 营业时间：</strong>每日 8:00–19:30<br>
+      <strong>☎ 电话：</strong>(0591) 8823-4471<br>
+      <strong>✉ 邮箱：</strong>laowang_tea@126.com
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="zh.html" class="active">🏠 首页</a>
+    <a href="teas.html">🍃 我们的茶</a>
+    <a href="teaware.html">🫖 茶具</a>
+    <a href="order.html">📦 网上订购</a>
+    <a href="find-us.html">📍 找到我们</a>
+    <a href="contact.html">📞 联系我们</a>
+    <a href="index.html">🇬🇧 English</a>
+  </div>
+
+  <div class="marquee-bar">
+    <span class="marquee-inner">
+      &nbsp;&nbsp;&nbsp;
+      🌟 2026年春茶新到！安溪铁观音明前特级现已上架，数量有限，欲购从速！&nbsp;&nbsp;
+      🎁 本月普洱茶饼买三送一！&nbsp;&nbsp;
+      🚚 国际包邮至美国、加拿大、澳大利亚、新加坡等30多个国家！&nbsp;&nbsp;
+      ☕ 欢迎到福州门店免费品茶！&nbsp;&nbsp;
+      🏆 荣获"福建省最佳传统茶叶店"2019、2021、2023年奖项！&nbsp;&nbsp;
+      👨‍👩‍👧 三代家业，祖父王建国1962年创立，坚守品质六十余年！
+      &nbsp;&nbsp;&nbsp;
+    </span>
+  </div>
+
+  <div class="main-wrap">
+    <div class="sidebar">
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🍃 茶叶分类</div>
+        <div class="sidebar-box-content">
+          <a href="teas.html#green">🟢 绿茶</a>
+          <a href="teas.html#puerh">🟤 普洱茶</a>
+          <a href="teas.html#black">⚫ 红茶</a>
+          <a href="teas.html#oolong">🔵 乌龙茶</a>
+          <a href="teas.html#white">⚪ 白茶</a>
+          <a href="teas.html#flower">🌸 花茶</a>
+          <a href="teaware.html">🫖 茶具</a>
+          <a href="order.html">🎁 礼品套装</a>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">📢 店内通知</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          2026年春茶季已开始！所有绿茶和乌龙均为新鲜春摘，库存有限，请尽快下单！
+          <br><br>
+          <span style="color:#8b0000;font-weight:bold;">五一假期（5月1-3日）照常营业</span>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🏆 荣誉资质</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.9;text-align:center;">
+          🥇 福建省最佳茶叶店 2023<br>
+          🥇 福建省最佳茶叶店 2021<br>
+          🥈 优质茶商 2020<br>
+          ⭐⭐⭐⭐⭐ 淘宝好评<br>
+          <span style="color:#8b0000;">4.9分（1847条评价）</span>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🔗 相关链接</div>
+        <div class="sidebar-box-content">
+          <a href="order.html#taobao">淘宝店铺</a>
+          <a href="contact.html">微信：laowangcha</a>
+          <a href="contact.html">小红书主页</a>
+          <a href="teas.html">泡茶指南</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="content">
+
+      <div class="welcome-box">
+        <h1>🎋 欢迎光临老王茶叶店！🎋</h1>
+        <div class="cn-sub">正宗福建好茶 · 三代传承 · 品质保证</div>
+        <hr class="red-divider">
+        <p>
+          您好，欢迎来到老王茶叶店！我叫王明志，是老王茶叶店第三代传人。我的祖父王建国于1962年在福州市创立了这家店。我们专注于正宗福建好茶——安溪铁观音乌龙、武夷岩茶、福鼎白茶以及云南普洱茶。所有茶叶均直接来自我们熟识的茶农，没有中间商，质量有保证！
+          <br><br>
+          自2008年起，我们开始向全球发货，已有来自美国、欧洲、澳大利亚等地的众多回头客。所有茶叶均采用真空铝箔袋密封包装，确保新鲜。如有任何问题，请随时通过邮件或微信联系我们！
+        </p>
+      </div>
+
+      <div class="section-heading">⭐ 精选商品</div>
+      <table class="product-table">
+        <tr>
+          <th>茶叶</th><th>介绍</th><th>产地</th><th>价格</th>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">🌿</span></td>
+          <td>
+            <span class="tea-name">安溪铁观音 特级</span>
+            <span class="tea-name-cn">Anxi Tieguanyin AAA Grade</span>
+            花香浓郁，口感顺滑，回甘持久。我们的明星产品！2026年春茶，新鲜现货。
+          </td>
+          <td>福建省安溪县</td>
+          <td class="price">¥88 / 100g<br><small>约$12美元</small></td>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">🪨</span></td>
+          <td>
+            <span class="tea-name">武夷大红袍 岩茶</span>
+            <span class="tea-name-cn">Wuyi Da Hong Pao Rock Oolong</span>
+            武夷山著名岩茶，矿物质感明显，焙火香气浓郁，汤色深红。回味悠长。
+          </td>
+          <td>福建省武夷山市</td>
+          <td class="price">¥168 / 100g<br><small>约$23美元</small></td>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">🌸</span></td>
+          <td>
+            <span class="tea-name">福鼎白毫银针 特级</span>
+            <span class="tea-name-cn">Fuding Silver Needle White Tea</span>
+            福鼎顶级白茶，满披白毫，香气清甜，口感轻盈。一年茶，三年药！
+          </td>
+          <td>福建省福鼎市</td>
+          <td class="price">¥220 / 50g<br><small>约$30美元</small></td>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">☁️</span></td>
+          <td>
+            <span class="tea-name">云南生普洱 2015年</span>
+            <span class="tea-name-cn">Yunnan Raw Pu-erh Cake 2015</span>
+            陈化11年生普，口感复杂，有樟香、陈香和干果香。越陈越香，是理想的收藏茶！
+          </td>
+          <td>云南省勐海县</td>
+          <td class="price">¥380 / 357g饼<br><small>约$52美元</small></td>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">🍃</span></td>
+          <td>
+            <span class="tea-name">西湖龙井 明前特级</span>
+            <span class="tea-name-cn">West Lake Longjing Pre-Qingming</span>
+            明前头采龙井，扁平挺直，栗香浓郁，滋味甘醇，是中国十大名茶之一！
+          </td>
+          <td>浙江省杭州市</td>
+          <td class="price">¥298 / 100g<br><small>约$41美元</small></td>
+        </tr>
+        <tr>
+          <td><span class="tea-emoji">🌺</span></td>
+          <td>
+            <span class="tea-name">福州茉莉花茶 龙珠特级</span>
+            <span class="tea-name-cn">Fuzhou Jasmine Pearl Tea</span>
+            我们的家乡特产！绿茶多次窨制茉莉花，香气馥郁，口感鲜爽。最受女性朋友欢迎！
+          </td>
+          <td>福建省福州市</td>
+          <td class="price">¥78 / 100g<br><small>约$11美元</small></td>
+        </tr>
+      </table>
+
+      <div class="gallery-box">
+        <div class="section-heading">📸 店铺风采</div>
+        <img src="https://images.unsplash.com/photo-eUgc1zIZQ-8?w=700&h=180&fit=crop&auto=format" alt="茶艺表演">
+        <div class="gallery-row">
+          <img src="https://images.unsplash.com/photo-XbYnaCbUWnI?w=230&h=110&fit=crop&auto=format" alt="铁观音">
+          <img src="https://images.unsplash.com/photo-nhhBv5PQ170?w=230&h=110&fit=crop&auto=format" alt="紫砂壶">
+          <img src="https://images.unsplash.com/photo-1566221473117-462040941772?w=230&h=110&fit=crop&auto=format" alt="盖碗">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    老王茶叶店 &nbsp;|&nbsp; 福建省福州市鼓楼区中山路47号 350001<br>
+    电话：(0591) 8823-4471 &nbsp;|&nbsp; 邮箱：<a href="mailto:laowang_tea@126.com">laowang_tea@126.com</a> &nbsp;|&nbsp; 微信：laowangcha<br>
+    <a href="zh.html">首页</a> · <a href="teas.html">我们的茶</a> · <a href="teaware.html">茶具</a> · <a href="order.html">网上订购</a> · <a href="find-us.html">找到我们</a> · <a href="contact.html">联系我们</a>
+    &nbsp;·&nbsp; <a href="#" id="staffLoginLink">员工登录</a>
+    <div class="footer-cn">© 2026 老王茶叶店 版权所有 · 三代家业，始于1962年 · All Rights Reserved</div>
+  </footer>
+
+  <div id="authOverlay">
+    <div id="authBox">
+      <button id="authClose">✕</button>
+      <div class="modal-top">🏮</div>
+      <h2>Staff Login / 员工登录</h2>
+      <div class="modal-cn">老王茶叶店 · Internal Access</div>
+      <input type="password" id="authInput" placeholder="请输入访问码" autocomplete="new-password" spellcheck="false" name="tea-code">
+      <button id="authBtn">登录 LOGIN</button>
+      <div id="authError"></div>
+    </div>
+  </div>
+
+  <script src="keys.js?v=3"></script>
+  <script src="auth.js?v=3"></script>
+  <script>
+    let logoClicks = 0, logoTimer = null;
+    document.getElementById('logoBtn').addEventListener('click', () => {
+      logoClicks++;
+      clearTimeout(logoTimer);
+      logoTimer = setTimeout(() => { logoClicks = 0; }, 600);
+      if (logoClicks >= 3) { logoClicks = 0; openModal(); }
+    });
+
+    document.getElementById('staffLoginLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '`') window.location.href = 'https://www.baidu.com/s?wd=福建茶叶种类';
+    });
+
+    function openModal() {
+      document.getElementById('authOverlay').classList.add('active');
+      document.getElementById('authInput').value = '';
+      document.getElementById('authError').textContent = '';
+      setTimeout(() => document.getElementById('authInput').focus(), 80);
+    }
+
+    function closeModal() {
+      document.getElementById('authOverlay').classList.remove('active');
+    }
+
+    document.getElementById('authClose').addEventListener('click', closeModal);
+    document.getElementById('authOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('authOverlay')) closeModal();
+    });
+    document.getElementById('authInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') attemptUnlock();
+    });
+    document.getElementById('authBtn').addEventListener('click', attemptUnlock);
+
+    async function attemptUnlock() {
+      const val = document.getElementById('authInput').value.trim();
+      if (!val) return;
+      const ok = await tryUnlock(val);
+      if (ok) {
+        closeModal();
+        launchCloaked();
+      } else {
+        document.getElementById('authError').textContent = '访问码无效，请重试。';
+        document.getElementById('authInput').select();
+      }
+    }
+
+    function launchCloaked() {
+      const w = window.open('about:blank', '_blank');
+      if (!w) { window.location.href = 'loading.html'; return; }
+      fetch('loading.html')
+        .then(r => r.text())
+        .then(html => {
+          const keyHash = sessionStorage.getItem('sgUnlockedSession');
+          const tier    = sessionStorage.getItem('sgUnlockedTier');
+          w.sessionStorage.setItem('sgUnlockedSession', keyHash);
+          w.sessionStorage.setItem('sgUnlockedTier',    tier);
+          w.sessionStorage.setItem('sgCloakToken',      '1');
+          const base = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+          html = html.replace('<head>', `<head><base href="${base}">`);
+          w.document.open();
+          w.document.write(html);
+          w.document.close();
+        });
+    }
+  </script>
+</body>
+</html>
