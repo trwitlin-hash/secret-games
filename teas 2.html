@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Teas 我们的茶 — Lao Wang Tea Shop</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <style>
+    body { margin:0; background-color:#f7e8c8; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a060' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); font-family:Georgia,'Times New Roman',serif; color:#3a1a00; }
+    .top-banner { background:#8b0000; color:#ffd700; text-align:center; padding:6px; font-size:13px; letter-spacing:1px; border-bottom:3px double #ffd700; }
+    .header { background:#8b0000; border-bottom:5px double #ffd700; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .logo { font-size:52px; cursor:default; user-select:none; display:block; filter:drop-shadow(2px 2px 0px rgba(0,0,0,0.4)); }
+    .shop-name-cn { font-size:28px; color:#ffd700; font-weight:bold; text-shadow:1px 1px 0 #5a0000,2px 2px 0 #3a0000; letter-spacing:4px; display:block; }
+    .shop-name-en { font-size:13px; color:#ffecaa; letter-spacing:1px; display:block; margin-top:2px; }
+    .shop-tagline { font-size:11px; color:#ffc080; display:block; font-style:italic; margin-top:3px; }
+    .header-right { text-align:right; color:#ffecaa; font-size:12px; line-height:1.9; }
+    .header-right strong { color:#ffd700; }
+    .navbar { background:#6b0000; border-bottom:2px solid #ffd700; border-top:2px solid #ffd700; padding:0; display:flex; flex-wrap:wrap; }
+    .navbar a { color:#ffd700; text-decoration:none; padding:8px 18px; font-size:13px; border-right:1px solid rgba(255,215,0,0.3); display:inline-block; }
+    .navbar a:hover { background:rgba(255,215,0,0.15); }
+    .navbar a.active { background:rgba(255,215,0,0.2); font-weight:bold; }
+    .marquee-bar { background:#fff8e8; border-bottom:1px dashed #c89040; padding:5px 0; overflow:hidden; white-space:nowrap; font-size:12px; color:#8b3a00; }
+    .marquee-inner { display:inline-block; animation:scroll-left 30s linear infinite; }
+    @keyframes scroll-left { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+    .main-wrap { max-width:960px; margin:18px auto; padding:0 12px; display:flex; gap:16px; align-items:flex-start; }
+    .sidebar { width:190px; flex-shrink:0; }
+    .sidebar-box { border:2px solid #8b3a00; background:#fffbf0; margin-bottom:14px; }
+    .sidebar-box-title { background:#8b0000; color:#ffd700; font-size:12px; font-weight:bold; padding:4px 8px; letter-spacing:1px; text-align:center; border-bottom:1px solid #ffd700; }
+    .sidebar-box-content { padding:10px; font-size:12px; line-height:2.0; color:#3a1a00; }
+    .sidebar-box-content a { color:#8b0000; text-decoration:none; display:block; }
+    .sidebar-box-content a:hover { text-decoration:underline; color:#c00; }
+    .content { flex:1; min-width:0; }
+    .section-heading { background:#8b0000; color:#ffd700; font-size:13px; font-weight:bold; padding:5px 10px; letter-spacing:2px; margin:0 0 14px 0; border-left:5px solid #ffd700; }
+    .tea-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:24px; }
+    .tea-card { border:2px solid #c8a060; background:#fffbf0; overflow:hidden; }
+    .tea-card img { width:100%; height:140px; object-fit:cover; display:block; }
+    .tea-card-body { padding:10px 12px; }
+    .tea-card-name { font-size:14px; font-weight:bold; color:#6b0000; margin-bottom:2px; }
+    .tea-card-cn { font-size:11px; color:#a05010; margin-bottom:6px; }
+    .tea-card-desc { font-size:12px; color:#5a2a00; line-height:1.6; margin-bottom:8px; }
+    .tea-card-price { font-size:13px; font-weight:bold; color:#8b0000; }
+    .tea-card-price small { font-size:11px; color:#8b3a00; font-weight:normal; }
+    .btn-order { display:inline-block; margin-top:6px; background:#8b0000; color:#ffd700; font-size:11px; padding:4px 12px; text-decoration:none; border:none; cursor:pointer; font-family:inherit; }
+    .btn-order:hover { background:#6b0000; }
+    footer { background:#3a0a00; border-top:4px double #ffd700; color:#c8a060; padding:18px 20px; font-size:12px; text-align:center; line-height:2.2; }
+    footer a { color:#ffd700; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+    .footer-cn { font-size:11px; color:#8b6040; margin-top:4px; }
+    .category-anchor { margin-top:24px; }
+    .category-anchor:first-child { margin-top:0; }
+  
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 720px) {
+      /* Header: compress */
+      .header { flex-direction: column; align-items: flex-start; padding: 10px 14px; gap: 4px; }
+      .header-right { display: none; }
+      .shop-name-cn { font-size: 20px; letter-spacing: 2px; }
+      .shop-name-en { font-size: 11px; }
+      .logo { font-size: 36px; }
+      .top-banner { font-size: 11px; padding: 4px 6px; letter-spacing: 0; }
+
+      /* Navbar: horizontal scroll, no wrap */
+      .navbar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .navbar::-webkit-scrollbar { display: none; }
+      .navbar a { white-space: nowrap; padding: 8px 12px; font-size: 12px; }
+
+      /* Layout: stack sidebar above content */
+      .main-wrap { flex-direction: column; padding: 0 8px; }
+      .sidebar { width: 100%; }
+
+      /* Grids */
+      .tea-grid { grid-template-columns: 1fr 1fr; }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .photo-row { flex-direction: column; }
+      .photo-row img { height: 180px; }
+      .shop-links { flex-direction: column; align-items: stretch; }
+      .shop-link-btn { text-align: center; }
+      .hours-table { font-size: 11px; }
+
+      /* Marquee */
+      .marquee-bar { font-size: 11px; }
+
+      /* Footer */
+      footer { font-size: 11px; padding: 12px; }
+
+      /* Misc */
+      .form-box { padding: 14px; }
+      .info-box { padding: 12px 14px; }
+    }
+
+    @media (max-width: 420px) {
+      .tea-grid { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .header-left { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-banner">🎋 WELCOME TO LAO WANG TEA SHOP! 欢迎光临老王茶叶店! &nbsp;|&nbsp; FREE SHIPPING ORDER OVER $30 &nbsp;|&nbsp; ☎ (0591) 8823-4471</div>
+
+  <div class="header">
+    <div class="header-left">
+      <div><span class="logo">🍵</span></div>
+      <div>
+        <span class="shop-name-cn">老王茶叶店</span>
+        <span class="shop-name-en">LAO WANG TEA SHOP</span>
+        <span class="shop-tagline">Family Business Since 1962 · Fuzhou, Fujian Province</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <strong>📍 Address:</strong> No. 47 Zhongshan Road, Fuzhou<br>
+      <strong>⏰ Hours:</strong> 8:00am – 7:30pm daily<br>
+      <strong>☎ Tel:</strong> (0591) 8823-4471<br>
+      <strong>✉ Email:</strong> laowang_tea@126.com
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠 Home</a>
+    <a href="teas.html" class="active">🍃 Our Teas</a>
+    <a href="teaware.html">🫖 Teaware</a>
+    <a href="order.html">📦 Order Online</a>
+    <a href="find-us.html">📍 Find Us</a>
+    <a href="contact.html">📞 Contact</a>
+    <a href="zh.html">🇨🇳 中文</a>
+  </div>
+
+  <div class="marquee-bar"><span class="marquee-inner">&nbsp;&nbsp;&nbsp;🌟 NEW ARRIVAL: 2026 Spring First Flush Anxi Tieguanyin now in stock!! &nbsp;&nbsp; 🎁 Buy 3 get 1 FREE on all Pu-erh cake this month!! &nbsp;&nbsp; 🚚 We ship to USA, Canada, Australia, Singapore and more!! &nbsp;&nbsp;&nbsp;</span></div>
+
+  <div class="main-wrap">
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🍃 TEA CATEGORIES</div>
+        <div class="sidebar-box-content">
+          <a href="#green">🟢 Green Tea 绿茶</a>
+          <a href="#puerh">🟤 Pu-erh Tea 普洱</a>
+          <a href="#black">⚫ Black Tea 红茶</a>
+          <a href="#oolong">🔵 Oolong Tea 乌龙</a>
+          <a href="#white">⚪ White Tea 白茶</a>
+          <a href="#flower">🌸 Flower Tea 花茶</a>
+          <a href="teaware.html">🫖 Teaware 茶具</a>
+          <a href="order.html">🎁 Gift Sets 礼品</a>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🏆 AWARDS</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.9;text-align:center;">
+          🥇 Best Fujian Tea Shop 2023<br>🥇 Best Fujian Tea Shop 2021<br>🥈 Top Tea Vendor 2020<br>⭐⭐⭐⭐⭐ on Taobao<br><span style="color:#8b0000;">4.9/5.0 (1,847 reviews)</span>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">📢 NOTICE</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          Spring 2026 harvest now available! Very fresh, limited stock. Order fast!<br><br>
+          <span style="color:#8b0000;font-weight:bold;">Closed: May 1–3 (Labour Day)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div id="oolong" class="category-anchor">
+        <div class="section-heading">🔵 OOLONG TEA 乌龙茶 — Fujian's Finest</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1627894005474-9889064bc4ca?w=400&h=280&fit=crop&auto=format" alt="Tieguanyin Oolong">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Anxi Tieguanyin AAA</div>
+              <div class="tea-card-cn">安溪铁观音 特级</div>
+              <div class="tea-card-desc">Our signature oolong. Floral orchid aroma, creamy smooth finish. 2026 spring first flush. Best seller for 15 years running!</div>
+              <div class="tea-card-price">¥88 / 100g <small>(~$12 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1604697976842-d36fa5a1b2ed?w=400&h=280&fit=crop&auto=format" alt="Wuyi Rock Oolong">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Wuyi Da Hong Pao</div>
+              <div class="tea-card-cn">武夷大红袍 岩茶</div>
+              <div class="tea-card-desc">Famous "Big Red Robe" rock oolong from Wuyi Mountain. Mineral roasted character, deep amber brew, long lasting finish.</div>
+              <div class="tea-card-price">¥168 / 100g <small>(~$23 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1606163017137-888c0177b3dd?w=400&h=280&fit=crop&auto=format" alt="Dancong Oolong">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Phoenix Dancong</div>
+              <div class="tea-card-cn">凤凰单丛 鸭屎香</div>
+              <div class="tea-card-desc">Rare "Duck Shit" aroma cultivar from Chaozhou. Sweet honey and tropical fruit notes. Very unique, popular with collector!</div>
+              <div class="tea-card-price">¥138 / 100g <small>(~$19 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="white" class="category-anchor">
+        <div class="section-heading">⚪ WHITE TEA 白茶 — Fuding Silver Tips</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1715016811010-e67e6f3d440c?w=400&h=280&fit=crop&auto=format" alt="Silver Needle">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Fuding Silver Needle</div>
+              <div class="tea-card-cn">福鼎白毫银针 特级</div>
+              <div class="tea-card-desc">Top grade white tea from Fuding, covered in white down. Delicate sweet honey flavor, very light and refreshing. Best white tea available!</div>
+              <div class="tea-card-price">¥220 / 50g <small>(~$30 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1641997829221-a7d363722a1b?w=400&h=280&fit=crop&auto=format" alt="White Peony">
+            <div class="tea-card-body">
+              <div class="tea-card-name">White Peony Baimudan</div>
+              <div class="tea-card-cn">福鼎白牡丹 一级</div>
+              <div class="tea-card-desc">Classic white tea with one bud and two leaves. Slightly fuller body than Silver Needle, with fruity and fresh notes. Very popular!</div>
+              <div class="tea-card-price">¥128 / 100g <small>(~$17 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1765809411613-9870f2f2d459?w=400&h=280&fit=crop&auto=format" alt="Aged White Tea">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Aged Shou Mei 2018</div>
+              <div class="tea-card-cn">寿眉老白茶 2018年</div>
+              <div class="tea-card-desc">Aged 7 years white tea cake. Developed deep woody, jujube, and honey character. Excellent for health. "One year tea, three year medicine!"</div>
+              <div class="tea-card-price">¥198 / cake <small>(~$27 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="puerh" class="category-anchor">
+        <div class="section-heading">🟤 PU-ERH TEA 普洱茶 — Yunnan Aged Classics</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1628153792464-21bffac488d4?w=400&h=280&fit=crop&auto=format" alt="Pu-erh Cake">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Yunnan Sheng Pu-erh 2015</div>
+              <div class="tea-card-cn">云南生普洱茶饼 2015年</div>
+              <div class="tea-card-desc">Raw pu-erh cake aged 11 years. Complex earthy, camphor, and dried fruit notes. Excellent investment tea — improving every year!</div>
+              <div class="tea-card-price">¥380 / 357g cake <small>(~$52 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1672846785798-a8e82326abab?w=400&h=280&fit=crop&auto=format" alt="Ripe Pu-erh">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Menghai Shou Pu-erh</div>
+              <div class="tea-card-cn">勐海熟普洱 7572配方</div>
+              <div class="tea-card-desc">Classic Menghai ripe pu-erh. Smooth, earthy, and warm. Very easy to drink. Great for people new to pu-erh tea! Excellent for digestion.</div>
+              <div class="tea-card-price">¥168 / 357g cake <small>(~$23 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="green" class="category-anchor">
+        <div class="section-heading">🟢 GREEN TEA 绿茶 — Fresh & Delicate</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1641997827830-12fa1d1a238d?w=400&h=280&fit=crop&auto=format" alt="Longjing Green Tea">
+            <div class="tea-card-body">
+              <div class="tea-card-name">West Lake Longjing</div>
+              <div class="tea-card-cn">西湖龙井 明前特级</div>
+              <div class="tea-card-desc">Pre-Qingming first flush Dragon Well green tea. Flat pressed leaves, chestnut sweet aroma, very smooth vegetal taste. One of China's top 10 teas!</div>
+              <div class="tea-card-price">¥298 / 100g <small>(~$41 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1763617702099-d956f3fd8324?w=400&h=280&fit=crop&auto=format" alt="Biluochun">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Biluochun Spring 2026</div>
+              <div class="tea-card-cn">碧螺春 明前一级</div>
+              <div class="tea-card-desc">Curly spiral green tea from Dongting Mountain. Fresh floral and fruity aroma, very tender young leaves. Brew at 75°C for best result!</div>
+              <div class="tea-card-price">¥188 / 100g <small>(~$26 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="black" class="category-anchor">
+        <div class="section-heading">⚫ BLACK TEA 红茶 — Bold & Warming</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1577016029703-cc22a7c0c28c?w=400&h=280&fit=crop&auto=format" alt="Lapsang Souchong">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Zhengshan Lapsang Souchong</div>
+              <div class="tea-card-cn">正山小种 桐木关</div>
+              <div class="tea-card-desc">The original Lapsang Souchong from Tongmu, Wuyi. Smoky pine aroma, sweet longan aftertaste. Very famous worldwide. Excellent with milk!</div>
+              <div class="tea-card-price">¥148 / 100g <small>(~$20 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1531969179221-3946e6b5a5e7?w=400&h=280&fit=crop&auto=format" alt="Dian Hong">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Yunnan Golden Dian Hong</div>
+              <div class="tea-card-cn">云南滇红 金芽特级</div>
+              <div class="tea-card-desc">Golden tippy Yunnan black tea. Malty, honey sweet, no bitterness at all. Beautiful golden liquor. Very smooth and beginner friendly!</div>
+              <div class="tea-card-price">¥118 / 100g <small>(~$16 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="flower" class="category-anchor">
+        <div class="section-heading">🌸 FLOWER TEA 花茶 — Scented & Blended</div>
+        <div class="tea-grid">
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1672842700943-b9916abd19fa?w=400&h=280&fit=crop&auto=format" alt="Jasmine Tea">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Fuzhou Jasmine Pearl</div>
+              <div class="tea-card-cn">福州茉莉花茶 特级龙珠</div>
+              <div class="tea-card-desc">Our hometown specialty! Green tea rolled into pearls and scented multiple times with fresh jasmine flowers. Very popular with ladies and beginner!</div>
+              <div class="tea-card-price">¥78 / 100g <small>(~$11 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+          <div class="tea-card">
+            <img src="https://images.unsplash.com/photo-1634115180899-81551976ce4d?w=400&h=280&fit=crop&auto=format" alt="Rose Tea">
+            <div class="tea-card-body">
+              <div class="tea-card-name">Yunnan Rose Bud Tea</div>
+              <div class="tea-card-cn">云南玫瑰花茶 特级</div>
+              <div class="tea-card-desc">Whole dried Yunnan rose buds. Beautiful to look at, lovely floral sweet taste. Can drink alone or blend with any other tea. Great gift for ladies!</div>
+              <div class="tea-card-price">¥58 / 50g <small>(~$8 USD)</small></div>
+              <a class="btn-order" href="contact.html">Order Now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    老王茶叶店 · Lao Wang Tea Shop &nbsp;|&nbsp; No. 47 Zhongshan Road, Fuzhou, Fujian, China 350001<br>
+    Tel: (0591) 8823-4471 &nbsp;|&nbsp; Email: <a href="mailto:laowang_tea@126.com">laowang_tea@126.com</a> &nbsp;|&nbsp; WeChat: laowangcha<br>
+    <a href="index.html">Home</a> · <a href="teas.html">Our Teas</a> · <a href="teaware.html">Teaware</a> · <a href="order.html">Order</a> · <a href="find-us.html">Find Us</a> · <a href="contact.html">Contact</a>
+    <div class="footer-cn">© 2026 老王茶叶店 版权所有 · Family Business Since 1962 · All Rights Reserved</div>
+  </footer>
+<script src="music-player.js"></script>
+</body>
+</html>

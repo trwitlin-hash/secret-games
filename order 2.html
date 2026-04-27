@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Online 网上订购 — Lao Wang Tea Shop</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <style>
+    body { margin:0; background-color:#f7e8c8; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a060' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); font-family:Georgia,'Times New Roman',serif; color:#3a1a00; }
+    .top-banner { background:#8b0000; color:#ffd700; text-align:center; padding:6px; font-size:13px; letter-spacing:1px; border-bottom:3px double #ffd700; }
+    .header { background:#8b0000; border-bottom:5px double #ffd700; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .logo { font-size:52px; cursor:default; user-select:none; display:block; filter:drop-shadow(2px 2px 0px rgba(0,0,0,0.4)); }
+    .shop-name-cn { font-size:28px; color:#ffd700; font-weight:bold; text-shadow:1px 1px 0 #5a0000,2px 2px 0 #3a0000; letter-spacing:4px; display:block; }
+    .shop-name-en { font-size:13px; color:#ffecaa; letter-spacing:1px; display:block; margin-top:2px; }
+    .shop-tagline { font-size:11px; color:#ffc080; display:block; font-style:italic; margin-top:3px; }
+    .header-right { text-align:right; color:#ffecaa; font-size:12px; line-height:1.9; }
+    .header-right strong { color:#ffd700; }
+    .navbar { background:#6b0000; border-bottom:2px solid #ffd700; border-top:2px solid #ffd700; padding:0; display:flex; flex-wrap:wrap; }
+    .navbar a { color:#ffd700; text-decoration:none; padding:8px 18px; font-size:13px; border-right:1px solid rgba(255,215,0,0.3); display:inline-block; }
+    .navbar a:hover { background:rgba(255,215,0,0.15); }
+    .navbar a.active { background:rgba(255,215,0,0.2); font-weight:bold; }
+    .marquee-bar { background:#fff8e8; border-bottom:1px dashed #c89040; padding:5px 0; overflow:hidden; white-space:nowrap; font-size:12px; color:#8b3a00; }
+    .marquee-inner { display:inline-block; animation:scroll-left 30s linear infinite; }
+    @keyframes scroll-left { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+    .main-wrap { max-width:960px; margin:18px auto; padding:0 12px; display:flex; gap:16px; align-items:flex-start; }
+    .sidebar { width:190px; flex-shrink:0; }
+    .sidebar-box { border:2px solid #8b3a00; background:#fffbf0; margin-bottom:14px; }
+    .sidebar-box-title { background:#8b0000; color:#ffd700; font-size:12px; font-weight:bold; padding:4px 8px; letter-spacing:1px; text-align:center; border-bottom:1px solid #ffd700; }
+    .sidebar-box-content { padding:10px; font-size:12px; line-height:2.0; color:#3a1a00; }
+    .sidebar-box-content a { color:#8b0000; text-decoration:none; display:block; }
+    .sidebar-box-content a:hover { text-decoration:underline; color:#c00; }
+    .content { flex:1; min-width:0; }
+    .section-heading { background:#8b0000; color:#ffd700; font-size:13px; font-weight:bold; padding:5px 10px; letter-spacing:2px; margin:0 0 14px 0; border-left:5px solid #ffd700; }
+    .info-box { border:2px solid #8b3a00; background:#fffbf0; padding:16px 20px; margin-bottom:18px; font-size:13px; color:#5a2a00; line-height:1.9; }
+    .info-box h3 { color:#8b0000; margin:0 0 10px 0; font-size:15px; }
+    .shop-box { border:3px double #8b3a00; background:#fffbf0; padding:24px; margin-bottom:18px; text-align:center; }
+    .shop-box .coming-icon { font-size:64px; margin-bottom:12px; }
+    .shop-box h2 { font-size:20px; color:#8b0000; margin:0 0 8px 0; }
+    .shop-box p { font-size:13px; color:#5a2a00; line-height:1.8; margin:0 0 16px 0; }
+    .shop-links { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+    .shop-link-btn { background:#8b0000; color:#ffd700; text-decoration:none; padding:10px 20px; font-size:13px; font-weight:bold; letter-spacing:1px; border:2px solid #ffd700; }
+    .shop-link-btn:hover { background:#6b0000; }
+    .shipping-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:18px; }
+    .shipping-table th { background:#6b0000; color:#ffd700; padding:7px 10px; text-align:left; border:1px solid #8b3a00; }
+    .shipping-table td { padding:7px 10px; border:1px solid #c8a060; background:#fffbf0; }
+    .shipping-table tr:nth-child(even) td { background:#fff5dc; }
+    footer { background:#3a0a00; border-top:4px double #ffd700; color:#c8a060; padding:18px 20px; font-size:12px; text-align:center; line-height:2.2; }
+    footer a { color:#ffd700; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+    .footer-cn { font-size:11px; color:#8b6040; margin-top:4px; }
+  
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 720px) {
+      /* Header: compress */
+      .header { flex-direction: column; align-items: flex-start; padding: 10px 14px; gap: 4px; }
+      .header-right { display: none; }
+      .shop-name-cn { font-size: 20px; letter-spacing: 2px; }
+      .shop-name-en { font-size: 11px; }
+      .logo { font-size: 36px; }
+      .top-banner { font-size: 11px; padding: 4px 6px; letter-spacing: 0; }
+
+      /* Navbar: horizontal scroll, no wrap */
+      .navbar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .navbar::-webkit-scrollbar { display: none; }
+      .navbar a { white-space: nowrap; padding: 8px 12px; font-size: 12px; }
+
+      /* Layout: stack sidebar above content */
+      .main-wrap { flex-direction: column; padding: 0 8px; }
+      .sidebar { width: 100%; }
+
+      /* Grids */
+      .tea-grid { grid-template-columns: 1fr 1fr; }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .photo-row { flex-direction: column; }
+      .photo-row img { height: 180px; }
+      .shop-links { flex-direction: column; align-items: stretch; }
+      .shop-link-btn { text-align: center; }
+      .hours-table { font-size: 11px; }
+
+      /* Marquee */
+      .marquee-bar { font-size: 11px; }
+
+      /* Footer */
+      footer { font-size: 11px; padding: 12px; }
+
+      /* Misc */
+      .form-box { padding: 14px; }
+      .info-box { padding: 12px 14px; }
+    }
+
+    @media (max-width: 420px) {
+      .tea-grid { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .header-left { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-banner">🎋 WELCOME TO LAO WANG TEA SHOP! 欢迎光临老王茶叶店! &nbsp;|&nbsp; FREE SHIPPING ORDER OVER $30 &nbsp;|&nbsp; ☎ (0591) 8823-4471</div>
+
+  <div class="header">
+    <div class="header-left">
+      <div><span class="logo">🍵</span></div>
+      <div>
+        <span class="shop-name-cn">老王茶叶店</span>
+        <span class="shop-name-en">LAO WANG TEA SHOP</span>
+        <span class="shop-tagline">Family Business Since 1962 · Fuzhou, Fujian Province</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <strong>📍 Address:</strong> No. 47 Zhongshan Road, Fuzhou<br>
+      <strong>⏰ Hours:</strong> 8:00am – 7:30pm daily<br>
+      <strong>☎ Tel:</strong> (0591) 8823-4471<br>
+      <strong>✉ Email:</strong> laowang_tea@126.com
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠 Home</a>
+    <a href="teas.html">🍃 Our Teas</a>
+    <a href="teaware.html">🫖 Teaware</a>
+    <a href="order.html" class="active">📦 Order Online</a>
+    <a href="find-us.html">📍 Find Us</a>
+    <a href="contact.html">📞 Contact</a>
+    <a href="zh.html">🇨🇳 中文</a>
+  </div>
+
+  <div class="marquee-bar"><span class="marquee-inner">&nbsp;&nbsp;&nbsp;📦 International shipping available to 30+ countries!! &nbsp;&nbsp; 🎁 Free gift wrapping available — just leave note at checkout!! &nbsp;&nbsp; 💰 Buy 3 get 1 FREE on all pu-erh this month!!&nbsp;&nbsp;&nbsp;</span></div>
+
+  <div class="main-wrap">
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">📦 ORDER OPTIONS</div>
+        <div class="sidebar-box-content">
+          <a href="#online-store">🛒 Online Store</a>
+          <a href="#taobao">🏪 Taobao Store</a>
+          <a href="#wechat">💬 WeChat Order</a>
+          <a href="#shipping">🚚 Shipping Info</a>
+          <a href="#payment">💳 Payment</a>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">📞 ORDER BY PHONE</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          Call us directly:<br><strong>(0591) 8823-4471</strong><br>Mon–Sat 8am–7pm<br><br>
+          International customers please use WhatsApp or WeChat: <strong>laowangcha</strong>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">🔒 SAFE PAYMENT</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          We accept:<br>
+          💳 Credit card<br>
+          📱 PayPal<br>
+          💰 Alipay<br>
+          🏦 Bank transfer<br>
+          💬 WeChat Pay
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div id="online-store" class="shop-box">
+        <div class="coming-icon">🛒</div>
+        <h2>Online Store — Coming Soon!</h2>
+        <p>
+          We are currently setting up our international online store! Very soon you will be able to buy all our teas and teaware directly from this website with credit card and PayPal. Please check back soon!
+          <br><br>
+          In the meantime, you can order through our Taobao store, WeChat, or by email. We ship to over 30 countries worldwide!
+        </p>
+        <div class="shop-links">
+          <a class="shop-link-btn" href="contact.html">📧 Order by Email</a>
+          <a class="shop-link-btn" href="#wechat">💬 Order via WeChat</a>
+          <a class="shop-link-btn" href="#taobao">🏪 Visit Taobao Store</a>
+        </div>
+      </div>
+
+      <div id="taobao">
+        <div class="section-heading">🏪 OUR TAOBAO STORE 淘宝店铺</div>
+        <div class="info-box">
+          <h3>Shop on Taobao (China customers)</h3>
+          Our main online store is on Taobao. We have over 1,800 reviews with 4.9/5.0 rating. Search for <strong>老王茶叶店</strong> or scan the QR code below to visit our store.<br><br>
+          Store link: <strong>shop123456789.taobao.com</strong><br>
+          Store name: <strong>老王茶叶店 福州正宗</strong><br><br>
+          Taobao orders usually ship within 1-2 business days via SF Express or Yunda. Domestic China shipping only.
+        </div>
+      </div>
+
+      <div id="wechat">
+        <div class="section-heading">💬 ORDER VIA WECHAT 微信订购</div>
+        <div class="info-box">
+          <h3>For International Customers — WeChat is Easiest!</h3>
+          Add our WeChat ID: <strong>laowangcha</strong><br><br>
+          Send us a message with:<br>
+          1. What tea or teaware you want<br>
+          2. How much quantity<br>
+          3. Your shipping address<br><br>
+          We will reply within 24 hours with total price and payment link. We accept PayPal and bank transfer for international orders. Shipping takes 7–15 business days by China Post Air Mail or 3–7 days by DHL Express.
+        </div>
+      </div>
+
+      <div id="shipping">
+        <div class="section-heading">🚚 SHIPPING INFORMATION 运费说明</div>
+        <table class="shipping-table">
+          <tr>
+            <th>Destination</th>
+            <th>Method</th>
+            <th>Time</th>
+            <th>Cost</th>
+          </tr>
+          <tr><td>🇨🇳 China (domestic)</td><td>SF Express / Yunda</td><td>1–3 days</td><td>¥12 (free over ¥200)</td></tr>
+          <tr><td>🇺🇸 USA / Canada</td><td>China Post Air Mail</td><td>10–20 days</td><td>¥68 (~$9 USD)</td></tr>
+          <tr><td>🇺🇸 USA / Canada</td><td>DHL Express</td><td>3–7 days</td><td>¥288 (~$40 USD)</td></tr>
+          <tr><td>🇬🇧 UK / Europe</td><td>China Post Air Mail</td><td>10–18 days</td><td>¥58 (~$8 USD)</td></tr>
+          <tr><td>🇦🇺 Australia / NZ</td><td>China Post Air Mail</td><td>8–15 days</td><td>¥58 (~$8 USD)</td></tr>
+          <tr><td>🌏 Southeast Asia</td><td>China Post Air Mail</td><td>5–12 days</td><td>¥38 (~$5 USD)</td></tr>
+          <tr><td>🌍 Other countries</td><td>China Post Air Mail</td><td>14–30 days</td><td>¥78 (~$11 USD)</td></tr>
+        </table>
+        <div class="info-box" style="margin-top:0;">
+          <strong>Note:</strong> All orders over $30 USD equivalent receive free standard shipping! Tea is packed in vacuum sealed foil bags to ensure freshness during transit. Teaware is wrapped in bubble wrap and sturdy box. We take full responsibility for any damage during shipping — please send photo if any problem and we will reship or refund immediately!
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    老王茶叶店 · Lao Wang Tea Shop &nbsp;|&nbsp; No. 47 Zhongshan Road, Fuzhou, Fujian, China 350001<br>
+    Tel: (0591) 8823-4471 &nbsp;|&nbsp; Email: <a href="mailto:laowang_tea@126.com">laowang_tea@126.com</a> &nbsp;|&nbsp; WeChat: laowangcha<br>
+    <a href="index.html">Home</a> · <a href="teas.html">Our Teas</a> · <a href="teaware.html">Teaware</a> · <a href="order.html">Order</a> · <a href="find-us.html">Find Us</a> · <a href="contact.html">Contact</a>
+    <div class="footer-cn">© 2026 老王茶叶店 版权所有 · Family Business Since 1962 · All Rights Reserved</div>
+  </footer>
+<script src="music-player.js"></script>
+</body>
+</html>
