@@ -14,7 +14,7 @@
     { id: 'tIYu_mWBTkI', title: '古筝与竹笛', label: 'Guzheng & Bamboo Flute' },
     { id: 'ximY1AFvkrU', title: '传统乐器合奏', label: 'Traditional Ensemble' },
     { id: 'fWN4_Ik78bU', title: '山静风轻', label: 'Guzheng · Silent Mountains' },
-    { id: 'UOpgS3JDs10', title: '蜀琴雅音', label: 'Guqin Tea Music' },
+    { id: 'L1mmxdp4fM4', title: '古琴艺术', label: 'Art of the Guqin · Wu Ziying' },
     { id: 'XySO6IRq2nU', title: '飞花点翠', label: 'Pipa Solo · Liu Fang' },
     { id: 'MjOBUoZqJlw', title: '古韵悠然', label: 'Ancient Chinese Ambient' },
   ];
