@@ -49,6 +49,53 @@
     footer a { color:#ffd700; text-decoration:none; }
     footer a:hover { text-decoration:underline; }
     .footer-cn { font-size:11px; color:#8b6040; margin-top:4px; }
+  
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 720px) {
+      /* Header: compress */
+      .header { flex-direction: column; align-items: flex-start; padding: 10px 14px; gap: 4px; }
+      .header-right { display: none; }
+      .shop-name-cn { font-size: 20px; letter-spacing: 2px; }
+      .shop-name-en { font-size: 11px; }
+      .logo { font-size: 36px; }
+      .top-banner { font-size: 11px; padding: 4px 6px; letter-spacing: 0; }
+
+      /* Navbar: horizontal scroll, no wrap */
+      .navbar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .navbar::-webkit-scrollbar { display: none; }
+      .navbar a { white-space: nowrap; padding: 8px 12px; font-size: 12px; }
+
+      /* Layout: stack sidebar above content */
+      .main-wrap { flex-direction: column; padding: 0 8px; }
+      .sidebar { width: 100%; }
+
+      /* Grids */
+      .tea-grid { grid-template-columns: 1fr 1fr; }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .photo-row { flex-direction: column; }
+      .photo-row img { height: 180px; }
+      .shop-links { flex-direction: column; align-items: stretch; }
+      .shop-link-btn { text-align: center; }
+      .hours-table { font-size: 11px; }
+
+      /* Marquee */
+      .marquee-bar { font-size: 11px; }
+
+      /* Footer */
+      footer { font-size: 11px; padding: 12px; }
+
+      /* Misc */
+      .form-box { padding: 14px; }
+      .info-box { padding: 12px 14px; }
+    }
+
+    @media (max-width: 420px) {
+      .tea-grid { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .header-left { flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
