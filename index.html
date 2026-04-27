@@ -750,22 +750,20 @@
     }
 
     function launchCloaked() {
-      const w = window.open('about:blank', '_blank');
-      if (!w) { window.location.href = 'loading.html'; return; }
-      fetch('loading.html')
-        .then(r => r.text())
-        .then(html => {
-          const keyHash = sessionStorage.getItem('sgUnlockedSession');
-          const tier    = sessionStorage.getItem('sgUnlockedTier');
-          w.sessionStorage.setItem('sgUnlockedSession', keyHash);
-          w.sessionStorage.setItem('sgUnlockedTier',    tier);
-          w.sessionStorage.setItem('sgCloakToken',      '1');
-          const base = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-          html = html.replace('<head>', `<head><base href="${base}">`);
-          w.document.open();
-          w.document.write(html);
-          w.document.close();
-        });
+      // Use localStorage to pass auth to the new tab — avoids document.write()
+      // which causes "This page was reset" errors on school Chromebooks.
+      const keyHash = sessionStorage.getItem('sgUnlockedSession');
+      const tier    = sessionStorage.getItem('sgUnlockedTier');
+      localStorage.setItem('sgLaunchHash', keyHash);
+      localStorage.setItem('sgLaunchTier', tier);
+      localStorage.setItem('sgLaunchExp',  String(Date.now() + 10000)); // 10s window
+
+      const w = window.open('loading.html', '_blank');
+      if (!w) {
+        // Popup blocked — navigate in same tab instead
+        sessionStorage.setItem('sgCloakToken', '1');
+        window.location.href = 'loading.html';
+      }
     }
   </script>
 <script src="music-player.js"></script>

@@ -43,6 +43,28 @@
         <div class="cl-entry">
           <div class="cl-date">April 2026</div>
           <div class="cl-tag cl-tag-new">🆕 New</div>
+          <p><strong>Smash Karts</strong> added — multiplayer kart battle royale.</p>
+        </div>
+
+        <div class="cl-entry">
+          <div class="cl-date">April 2026</div>
+          <div class="cl-tag cl-tag-removed">❌ Removed</div>
+          <p>Cleanup pass — removed games that were broken, duplicates, or low-quality:
+          <strong>Vex 4–7, Bullet Force, Papa's Pizzeria, CraftMine, POOM, Dumb Ways to Die,
+          Red Ball 4, Google Snake (duplicate), Territorial.io, Slither.io, Bonk.io, Edge Surf,
+          Minecraft 2D, Minecraft Tower Defence, Stickman Boost, Basketball Bros, Grindcraft,
+          Minesweeper, Incremancer, Space Company.</strong></p>
+        </div>
+
+        <div class="cl-entry">
+          <div class="cl-date">April 2026</div>
+          <div class="cl-tag cl-tag-fix">🔧 Fix</div>
+          <p>Fixed <strong>"This page was reset"</strong> error on school Chromebooks. Login now uses a localStorage handoff instead of <code>document.write()</code>, which was being blocked by school network proxies.</p>
+        </div>
+
+        <div class="cl-entry">
+          <div class="cl-date">April 2026</div>
+          <div class="cl-tag cl-tag-new">🆕 New</div>
           <p>Full <strong>FNAF series</strong> added — FNAF 1, 2, 3, 4, Sister Location, Pizzeria Simulator, and Ultimate Custom Night. All running on proper HTML5 Clickteam ports.</p>
         </div>
 
@@ -164,16 +186,37 @@
   <script src="keys.js?v=3"></script>
   <script src="auth.js?v=3"></script>
 
-  <!-- Block direct URL access — must be opened via launchCloaked() token -->
+  <!-- Block direct URL access — must be opened via launchCloaked() -->
   <script>
     (function() {
-      const token = sessionStorage.getItem('sgCloakToken');
-      if (!token || !isUnlocked()) {
-        sessionStorage.clear();
-        location.replace('index.html');
+      // Path 1: same-tab fallback (sessionStorage token)
+      const sessionToken = sessionStorage.getItem('sgCloakToken');
+      if (sessionToken && isUnlocked()) {
+        sessionStorage.removeItem('sgCloakToken');
+        return; // already good
       }
-      // Token is one-time use — remove it so reloads also redirect to gate
-      sessionStorage.removeItem('sgCloakToken');
+
+      // Path 2: new-tab launch via localStorage handoff
+      // index.html writes sgLaunchHash/Tier/Exp; we claim and consume them here.
+      const launchHash = localStorage.getItem('sgLaunchHash');
+      const launchTier = localStorage.getItem('sgLaunchTier');
+      const launchExp  = parseInt(localStorage.getItem('sgLaunchExp') || '0', 10);
+      if (launchHash && Date.now() < launchExp) {
+        // Consume immediately so a second tab can't reuse the token
+        localStorage.removeItem('sgLaunchHash');
+        localStorage.removeItem('sgLaunchTier');
+        localStorage.removeItem('sgLaunchExp');
+        sessionStorage.setItem('sgUnlockedSession', launchHash);
+        sessionStorage.setItem('sgUnlockedTier',    launchTier);
+        if (isUnlocked()) return; // valid key confirmed
+      }
+
+      // Path 3: already unlocked in this session (e.g. page refresh)
+      if (isUnlocked()) return;
+
+      // Not authorised — kick back to gate
+      sessionStorage.clear();
+      location.replace('index.html');
     })();
   </script>
 
@@ -379,20 +422,14 @@
       { name:"Bob the Robber 2",        emoji:"🕵️",  cat:"puzzle",   tier:"free", src:"games/bob-the-robber-2/index.html" },
 
       // Vex series (continued)
-      { name:"Vex 4",                   emoji:"🏃", cat:"action",   tier:"pro",  src:"games/vex4/index.html", series:"Vex" },
-      { name:"Vex 5",                   emoji:"🏃", cat:"action",   tier:"pro",  src:"games/vex5/index.html", series:"Vex" },
-      { name:"Vex 6",                   emoji:"🏃", cat:"action",   tier:"pro",  src:"games/vex6/index.html", series:"Vex" },
-      { name:"Vex 7",                   emoji:"🏃", cat:"action",   tier:"pro",  src:"games/vex7/index.html", series:"Vex" },
 
       // ── CrazyGames (verified working) ────────────────────────────────────────
       { name:"Moto X3M Pool Party", emoji:"🌊", cat:"driving",  tier:"free", src:"games/moto-x3m-pool-party/index.html", series:"Moto X3M" },
       { name:"Drift Hunters",       emoji:"🚗", cat:"driving",  tier:"free", src:"games/drift-hunters/index.html" },
-      { name:"Bullet Force",        emoji:"🔫", cat:"shooting", tier:"free", src:"games/bullet-force-multiplayer/index.html" },
       { name:"House of Hazards",    emoji:"🏠", cat:"action",   tier:"free", src:"games/house-of-hazards/index.html" },
       { name:"Eggy Car",            emoji:"🥚", cat:"casual",   tier:"free", src:"games/eggy-car/index.html" },
 
       // ── Papa's series (Ruffle/Flash) ─────────────────────────────────────────
-      { name:"Papa's Pizzeria",  emoji:"🍕", cat:"casual", tier:"free", src:"games/papas-pizzaria/index.html",  series:"Papa's" },
       { name:"Papa's Burgeria",  emoji:"🍔", cat:"casual", tier:"free", src:"games/papas-burgeria/index.html",  series:"Papa's" },
       { name:"Papa's Freezeria", emoji:"🍦", cat:"casual", tier:"free", src:"games/papas-freezeria/index.html", series:"Papa's" },
 
@@ -405,42 +442,25 @@
       { name:"Achievement Unlocked", emoji:"🏆", cat:"puzzle",   tier:"free", src:"games/achievement-unlocked/index.html" },
       { name:"Achievement Unlocked 2",emoji:"🏆", cat:"puzzle",  tier:"free", src:"games/achievement-unlocked-2/index.html" },
       { name:"Bacon May Die",        emoji:"🥓", cat:"action",   tier:"free", src:"games/bacon-may-die/index.html" },
-      { name:"CraftMine",            emoji:"⛏️",  cat:"sandbox",  tier:"free", src:"games/craftmine/index.html" },
-      { name:"POOM",                 emoji:"👾", cat:"shooting", tier:"free", src:"games/poom/index.html" },
       { name:"The Final Earth",      emoji:"🌍", cat:"strategy", tier:"free", src:"games/the-final-earth/index.html" },
-      { name:"Dumb Ways to Die",     emoji:"💀", cat:"casual",   tier:"free", src:"games/dumb-ways-to-die/index.html" },
       { name:"Dragon vs Bricks",     emoji:"🐉", cat:"arcade",   tier:"free", src:"games/dragon-vs-bricks/index.html" },
       { name:"Gravity Soccer",       emoji:"⚽", cat:"sports",   tier:"free", src:"games/gravity-soccer/index.html" },
       { name:"Slime Rush TD",        emoji:"🟢", cat:"strategy", tier:"free", src:"games/slime-rush-td/index.html" },
       { name:"Stickman Golf",        emoji:"⛳", cat:"sports",   tier:"free", src:"games/stickman-golf/index.html" },
       { name:"Knife Master",         emoji:"🔪", cat:"arcade",   tier:"free", src:"games/knife-master/index.html" },
       { name:"Cannon Basketball 4",  emoji:"🏀", cat:"sports",   tier:"free", src:"games/cannon-basketball-4/index.html" },
-      { name:"Red Ball 4",           emoji:"🔴", cat:"action",   tier:"free", src:"games/red-ball-4/index.html" },
 
       // ── HTML5 Browser Games ──────────────────────────────────────────────────
-      { name:"Google Snake",         emoji:"🐍", cat:"arcade",   tier:"free", src:"games/google-snake/index.html" },
-      { name:"Territorial.io",       emoji:"🗺️",  cat:"action",   tier:"free", src:"games/territorialio/index.html" },
-      { name:"Slither.io",           emoji:"🐍", cat:"action",   tier:"free", src:"games/slitherio/index.html" },
-      { name:"Bonk.io",              emoji:"💥", cat:"action",   tier:"free", src:"games/bonkio/index.html" },
-      { name:"Edge Surf",            emoji:"🏄", cat:"arcade",   tier:"free", src:"games/edge-surf/index.html" },
-      { name:"Minecraft 2D",         emoji:"⛏️",  cat:"sandbox",  tier:"free", src:"games/minecraft-2d/index.html" },
-      { name:"Minecraft Tower Defence",emoji:"🏰",cat:"strategy", tier:"free", src:"games/minecraft-tower-defence/index.html" },
 
       // ── Arcade / Skill ───────────────────────────────────────────────────────
       { name:"Slope Ball",         emoji:"🔵", cat:"arcade",   tier:"free", src:"games/slope-ball/index.html" },
       { name:"Death Run 3D",       emoji:"💀", cat:"action",   tier:"free", src:"games/death-run-3d/index.html" },
-      { name:"Stickman Boost",     emoji:"🏃", cat:"action",   tier:"free", src:"games/stickman-boost/index.html" },
       { name:"Tank Trouble 2",     emoji:"💣", cat:"action",   tier:"free", src:"games/tank-trouble-2/index.html" },
-      { name:"Basketball Bros",    emoji:"🏀", cat:"sports",   tier:"free", src:"games/basketball-bros/index.html" },
       { name:"Merge Round Racers", emoji:"🏎️",  cat:"driving",  tier:"free", src:"games/merge-round-racers/index.html" },
 
       // ── Strategy / Idle ──────────────────────────────────────────────────────
-      { name:"Grindcraft",       emoji:"⛏️",  cat:"sandbox",  tier:"free", src:"games/grindcraft/index.html" },
       { name:"Learn to Fly 2",   emoji:"🐧", cat:"action",   tier:"free", src:"games/learn-to-fly-2/index.html" },
       { name:"Duck Life 5",      emoji:"🐤", cat:"action",   tier:"free", src:"games/duck-life-5/index.html" },
-      { name:"Minesweeper",      emoji:"💣", cat:"puzzle",   tier:"free", src:"games/minesweeper/index.html" },
-      { name:"Incremancer",      emoji:"🧙", cat:"idle",     tier:"free", src:"games/incremancer/index.html" },
-      { name:"Space Company",    emoji:"🚀", cat:"idle",     tier:"free", src:"games/space-company/index.html" },
 
     ];
 

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us 联系我们 — Lao Wang Tea Shop</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <style>
+    body { margin:0; background-color:#f7e8c8; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a060' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); font-family:Georgia,'Times New Roman',serif; color:#3a1a00; }
+    .top-banner { background:#8b0000; color:#ffd700; text-align:center; padding:6px; font-size:13px; letter-spacing:1px; border-bottom:3px double #ffd700; }
+    .header { background:#8b0000; border-bottom:5px double #ffd700; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .logo { font-size:52px; cursor:default; user-select:none; display:block; filter:drop-shadow(2px 2px 0px rgba(0,0,0,0.4)); }
+    .shop-name-cn { font-size:28px; color:#ffd700; font-weight:bold; text-shadow:1px 1px 0 #5a0000,2px 2px 0 #3a0000; letter-spacing:4px; display:block; }
+    .shop-name-en { font-size:13px; color:#ffecaa; letter-spacing:1px; display:block; margin-top:2px; }
+    .shop-tagline { font-size:11px; color:#ffc080; display:block; font-style:italic; margin-top:3px; }
+    .header-right { text-align:right; color:#ffecaa; font-size:12px; line-height:1.9; }
+    .header-right strong { color:#ffd700; }
+    .navbar { background:#6b0000; border-bottom:2px solid #ffd700; border-top:2px solid #ffd700; padding:0; display:flex; flex-wrap:wrap; }
+    .navbar a { color:#ffd700; text-decoration:none; padding:8px 18px; font-size:13px; border-right:1px solid rgba(255,215,0,0.3); display:inline-block; }
+    .navbar a:hover { background:rgba(255,215,0,0.15); }
+    .navbar a.active { background:rgba(255,215,0,0.2); font-weight:bold; }
+    .marquee-bar { background:#fff8e8; border-bottom:1px dashed #c89040; padding:5px 0; overflow:hidden; white-space:nowrap; font-size:12px; color:#8b3a00; }
+    .marquee-inner { display:inline-block; animation:scroll-left 30s linear infinite; }
+    @keyframes scroll-left { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+    .main-wrap { max-width:960px; margin:18px auto; padding:0 12px; display:flex; gap:16px; align-items:flex-start; }
+    .sidebar { width:190px; flex-shrink:0; }
+    .sidebar-box { border:2px solid #8b3a00; background:#fffbf0; margin-bottom:14px; }
+    .sidebar-box-title { background:#8b0000; color:#ffd700; font-size:12px; font-weight:bold; padding:4px 8px; letter-spacing:1px; text-align:center; border-bottom:1px solid #ffd700; }
+    .sidebar-box-content { padding:10px; font-size:12px; line-height:2.0; color:#3a1a00; }
+    .sidebar-box-content a { color:#8b0000; text-decoration:none; display:block; }
+    .sidebar-box-content a:hover { text-decoration:underline; color:#c00; }
+    .content { flex:1; min-width:0; }
+    .section-heading { background:#8b0000; color:#ffd700; font-size:13px; font-weight:bold; padding:5px 10px; letter-spacing:2px; margin:0 0 14px 0; border-left:5px solid #ffd700; }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+    .contact-card { border:2px solid #8b3a00; background:#fffbf0; padding:16px; }
+    .contact-card h3 { color:#8b0000; font-size:14px; margin:0 0 10px 0; }
+    .contact-card p { font-size:12px; color:#5a2a00; line-height:1.9; margin:0; }
+    .contact-card strong { color:#3a1a00; }
+    .form-box { border:3px double #8b3a00; background:#fffbf0; padding:20px 24px; margin-bottom:18px; }
+    .form-box h3 { color:#8b0000; font-size:15px; margin:0 0 14px 0; }
+    .form-row { margin-bottom:12px; }
+    .form-row label { display:block; font-size:12px; color:#5a2a00; margin-bottom:4px; font-weight:bold; }
+    .form-row input, .form-row select, .form-row textarea {
+      width:100%; padding:8px 10px; border:1px solid #8b3a00; background:#fffdf5;
+      font-size:13px; color:#3a1a00; font-family:Georgia,serif; box-sizing:border-box;
+      outline:none;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color:#8b0000; }
+    .form-row textarea { height:110px; resize:vertical; }
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .btn-submit { background:#8b0000; color:#ffd700; border:none; padding:10px 28px; font-size:14px; font-weight:bold; cursor:pointer; font-family:Georgia,serif; letter-spacing:1px; }
+    .btn-submit:hover { background:#6b0000; }
+    .success-msg { display:none; background:#e8f5e9; border:1px solid #4caf50; color:#2e7d32; padding:10px 14px; font-size:13px; margin-top:10px; }
+    footer { background:#3a0a00; border-top:4px double #ffd700; color:#c8a060; padding:18px 20px; font-size:12px; text-align:center; line-height:2.2; }
+    footer a { color:#ffd700; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+    .footer-cn { font-size:11px; color:#8b6040; margin-top:4px; }
+    @media(max-width:600px) { .contact-grid{grid-template-columns:1fr} .form-row-2{grid-template-columns:1fr} }
+  
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 720px) {
+      /* Header: compress */
+      .header { flex-direction: column; align-items: flex-start; padding: 10px 14px; gap: 4px; }
+      .header-right { display: none; }
+      .shop-name-cn { font-size: 20px; letter-spacing: 2px; }
+      .shop-name-en { font-size: 11px; }
+      .logo { font-size: 36px; }
+      .top-banner { font-size: 11px; padding: 4px 6px; letter-spacing: 0; }
+
+      /* Navbar: horizontal scroll, no wrap */
+      .navbar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .navbar::-webkit-scrollbar { display: none; }
+      .navbar a { white-space: nowrap; padding: 8px 12px; font-size: 12px; }
+
+      /* Layout: stack sidebar above content */
+      .main-wrap { flex-direction: column; padding: 0 8px; }
+      .sidebar { width: 100%; }
+
+      /* Grids */
+      .tea-grid { grid-template-columns: 1fr 1fr; }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .photo-row { flex-direction: column; }
+      .photo-row img { height: 180px; }
+      .shop-links { flex-direction: column; align-items: stretch; }
+      .shop-link-btn { text-align: center; }
+      .hours-table { font-size: 11px; }
+
+      /* Marquee */
+      .marquee-bar { font-size: 11px; }
+
+      /* Footer */
+      footer { font-size: 11px; padding: 12px; }
+
+      /* Misc */
+      .form-box { padding: 14px; }
+      .info-box { padding: 12px 14px; }
+    }
+
+    @media (max-width: 420px) {
+      .tea-grid { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .header-left { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-banner">🎋 WELCOME TO LAO WANG TEA SHOP! 欢迎光临老王茶叶店! &nbsp;|&nbsp; FREE SHIPPING ORDER OVER $30 &nbsp;|&nbsp; ☎ (0591) 8823-4471</div>
+
+  <div class="header">
+    <div class="header-left">
+      <div><span class="logo">🍵</span></div>
+      <div>
+        <span class="shop-name-cn">老王茶叶店</span>
+        <span class="shop-name-en">LAO WANG TEA SHOP</span>
+        <span class="shop-tagline">Family Business Since 1962 · Fuzhou, Fujian Province</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <strong>📍 Address:</strong> No. 47 Zhongshan Road, Fuzhou<br>
+      <strong>⏰ Hours:</strong> 8:00am – 7:30pm daily<br>
+      <strong>☎ Tel:</strong> (0591) 8823-4471<br>
+      <strong>✉ Email:</strong> laowang_tea@126.com
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠 Home</a>
+    <a href="teas.html">🍃 Our Teas</a>
+    <a href="teaware.html">🫖 Teaware</a>
+    <a href="order.html">📦 Order Online</a>
+    <a href="find-us.html">📍 Find Us</a>
+    <a href="contact.html" class="active">📞 Contact</a>
+    <a href="zh.html">🇨🇳 中文</a>
+  </div>
+
+  <div class="marquee-bar"><span class="marquee-inner">&nbsp;&nbsp;&nbsp;📞 We reply to all messages within 24 hours!! &nbsp;&nbsp; 💬 WeChat is fastest for international customers — ID: laowangcha!! &nbsp;&nbsp; ✉ Email: laowang_tea@126.com&nbsp;&nbsp;&nbsp;</span></div>
+
+  <div class="main-wrap">
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">📞 CONTACT INFO</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.9;">
+          <strong>Tel:</strong> (0591) 8823-4471<br>
+          <strong>Email:</strong> laowang_tea@126.com<br>
+          <strong>WeChat:</strong> laowangcha<br>
+          <strong>WhatsApp:</strong> +86 138 0591 4471<br>
+          <strong>Taobao:</strong> 老王茶叶店
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">⏰ REPLY TIMES</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          📧 Email: 24 hours<br>
+          💬 WeChat: 1–4 hours<br>
+          ☎ Phone: immediate<br>
+          (8am–7:30pm CST)<br><br>
+          <span style="color:#8b0000;">We speak English, Chinese, and some Japanese!</span>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">❓ COMMON QUESTIONS</div>
+        <div class="sidebar-box-content" style="font-size:11px;line-height:1.7;">
+          <strong>Do you ship internationally?</strong><br>Yes! 30+ countries.<br><br>
+          <strong>Minimum order?</strong><br>No minimum — order any amount!<br><br>
+          <strong>Sample packs?</strong><br>Yes! Ask us for tasting sample sets.
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="section-heading">📞 HOW TO REACH US 联系方式</div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>📧 Email 电子邮件</h3>
+          <p>
+            <strong>laowang_tea@126.com</strong><br><br>
+            For orders, wholesale enquiries, and general questions. We reply within 24 hours. Please write in English or Chinese — both are fine!
+          </p>
+        </div>
+        <div class="contact-card">
+          <h3>💬 WeChat 微信</h3>
+          <p>
+            <strong>WeChat ID: laowangcha</strong><br><br>
+            Fastest way to contact us for international customers! Send us a message any time — we are usually online 8am–10pm China time (UTC+8).
+          </p>
+        </div>
+        <div class="contact-card">
+          <h3>☎ Phone 电话</h3>
+          <p>
+            <strong>(0591) 8823-4471</strong> (China)<br>
+            <strong>+86 138 0591 4471</strong> (International / WhatsApp)<br><br>
+            Call or WhatsApp during business hours: 8:00am – 7:30pm, Monday to Saturday.
+          </p>
+        </div>
+        <div class="contact-card">
+          <h3>📍 Visit Us 来访</h3>
+          <p>
+            <strong>No. 47 Zhongshan Road, Fuzhou</strong><br><br>
+            Walk-ins always welcome! Free tea tasting for all visitors. Come meet Wang Mingzhi in person — he loves to talk about tea!
+          </p>
+        </div>
+      </div>
+
+      <div class="section-heading">✉ SEND US A MESSAGE 发送消息</div>
+      <div class="form-box">
+        <h3>We'd love to hear from you! 欢迎联系我们</h3>
+        <form id="contactForm" onsubmit="handleSubmit(event)">
+          <div class="form-row-2">
+            <div class="form-row">
+              <label for="fname">Your Name 姓名 *</label>
+              <input type="text" id="fname" placeholder="Your full name" required>
+            </div>
+            <div class="form-row">
+              <label for="femail">Email Address 邮箱 *</label>
+              <input type="email" id="femail" placeholder="your@email.com" required>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-row">
+              <label for="fcountry">Country 国家</label>
+              <select id="fcountry">
+                <option value="">— Select your country —</option>
+                <option>United States</option>
+                <option>Canada</option>
+                <option>United Kingdom</option>
+                <option>Australia</option>
+                <option>Singapore</option>
+                <option>Malaysia</option>
+                <option>Japan</option>
+                <option>Germany</option>
+                <option>France</option>
+                <option>China (mainland)</option>
+                <option>Taiwan</option>
+                <option>Hong Kong</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="fsubject">Subject 主题 *</label>
+              <select id="fsubject" required>
+                <option value="">— Select a topic —</option>
+                <option>Place an Order 下订单</option>
+                <option>Tea Recommendation 推荐茶叶</option>
+                <option>Wholesale Enquiry 批发询价</option>
+                <option>Shipping Question 运费问题</option>
+                <option>Teaware Question 茶具问题</option>
+                <option>General Question 一般问题</option>
+                <option>Other 其他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="fmessage">Your Message 留言 *</label>
+            <textarea id="fmessage" placeholder="Tell us what you are looking for, how much quantity, your shipping address if ordering, or any questions you have!" required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">📨 Send Message 发送</button>
+          <div class="success-msg" id="successMsg">✅ Thank you! We received your message and will reply within 24 hours. 谢谢！我们会在24小时内回复您。</div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    老王茶叶店 · Lao Wang Tea Shop &nbsp;|&nbsp; No. 47 Zhongshan Road, Fuzhou, Fujian, China 350001<br>
+    Tel: (0591) 8823-4471 &nbsp;|&nbsp; Email: <a href="mailto:laowang_tea@126.com">laowang_tea@126.com</a> &nbsp;|&nbsp; WeChat: laowangcha<br>
+    <a href="index.html">Home</a> · <a href="teas.html">Our Teas</a> · <a href="teaware.html">Teaware</a> · <a href="order.html">Order</a> · <a href="find-us.html">Find Us</a> · <a href="contact.html">Contact</a>
+    <div class="footer-cn">© 2026 老王茶叶店 版权所有 · Family Business Since 1962 · All Rights Reserved</div>
+  </footer>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('contactForm').reset();
+      setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 6000);
+    }
+  </script>
+<script src="music-player.js"></script>
+</body>
+</html>
