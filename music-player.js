@@ -79,7 +79,7 @@
       width:  '1',
       videoId: PLAYLIST[currentIdx].id,
       playerVars: {
-        autoplay:       0,
+        autoplay:       1,
         controls:       0,
         disablekb:      1,
         fs:             0,
@@ -129,8 +129,10 @@
   function setPlayState(playing) {
     isPlaying = playing;
     const playBtn = document.getElementById('mp-play-btn');
+    const fab     = document.getElementById('mp-fab');
     const eq      = document.getElementById('mp-eq');
     if (playBtn) playBtn.textContent = playing ? '⏸' : '▶';
+    if (fab)     fab.textContent     = playing ? '⏸' : '▶';
     if (playing) {
       eq && eq.classList.remove('eq-paused');
       if (!eqInterval) eqInterval = setInterval(animateEq, 150);
@@ -221,15 +223,29 @@
         border-radius: 50%; background: #ffd700; cursor: pointer;
       }
       #mp-num { font-size: 10px; color: #8b6040; text-align: center; }
+      #mp-fab-row {
+        display: flex; align-items: center; gap: 8px;
+      }
       #mp-fab {
-        width: 48px; height: 48px; border-radius: 50%;
+        width: 56px; height: 56px; border-radius: 50%;
         background: #8b0000; border: 2px solid #ffd700;
-        color: #ffd700; font-size: 22px; cursor: pointer;
+        color: #ffd700; font-size: 26px; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         box-shadow: 0 2px 10px rgba(0,0,0,.45);
         transition: background .15s;
+        -webkit-tap-highlight-color: transparent;
       }
-      #mp-fab:hover { background: #6b0000; }
+      #mp-fab:hover, #mp-fab:active { background: #6b0000; }
+      #mp-expand-btn {
+        width: 28px; height: 28px; border-radius: 50%;
+        background: #3a0a00; border: 1.5px solid #ffd700;
+        color: #ffd700; font-size: 13px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 1px 6px rgba(0,0,0,.4);
+        transition: background .15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #mp-expand-btn:hover { background: #6b0000; }
     `;
     document.head.appendChild(css);
 
@@ -261,13 +277,24 @@
         '<div id="mp-vol-row">🔊 <input type="range" id="mp-vol" min="0" max="100" value="40"></div>' +
         '<div id="mp-num">' + (currentIdx + 1) + ' / ' + PLAYLIST.length + '</div>' +
       '</div>' +
-      '<button id="mp-fab" title="Traditional Chinese Music 🎵">🎵</button>';
+      '<div id="mp-fab-row">' +
+        '<button id="mp-expand-btn" title="Open / Close player">🎵</button>' +
+        '<button id="mp-fab" title="Play / Pause">▶</button>' +
+      '</div>';
     document.body.appendChild(wrap);
 
     if (isExpanded) document.getElementById('mp-panel').classList.add('mp-open');
 
-    // Events
+    // Events — FAB = play/pause (the whole circle), expand btn = open panel
     document.getElementById('mp-fab').addEventListener('click', function () {
+      if (!ytPlayer || !apiReady) {
+        // API not ready yet — mark to autoplay when ready
+        resumeOnReady = true;
+        return;
+      }
+      togglePlay();
+    });
+    document.getElementById('mp-expand-btn').addEventListener('click', function () {
       isExpanded = !isExpanded;
       document.getElementById('mp-panel').classList.toggle('mp-open', isExpanded);
       saveState();
@@ -282,7 +309,10 @@
 
   // ── Init ──────────────────────────────────────────────────────────────
   function init() {
-    resumeOnReady = loadState();
+    const wasPlaying = loadState();
+    // Auto-start: always play on load (browser allows autoplay after user
+    // has interacted with the page via the auth flow)
+    resumeOnReady = true;
     buildUI();
     loadYTAPI();
   }
