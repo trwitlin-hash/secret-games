@@ -63,7 +63,7 @@
     #authBox .modal-top { font-size:28px; margin-bottom:8px; }
     #authBox h2 { font-size:16px; color:#8b0000; margin-bottom:2px; }
     #authBox .modal-cn { font-size:12px; color:#a05010; letter-spacing:2px; margin-bottom:18px; }
-    #authInput { width:100%; padding:9px 12px; border:2px solid #8b3a00; font-size:14px; font-family:monospace; background:#fffbf0; color:#3a1a00; text-align:center; letter-spacing:2px; outline:none; margin-bottom:12px; box-sizing:border-box; }
+    #authInput { width:100%; padding:9px 12px; border:2px solid #8b3a00; font-size:14px; font-family:monospace; background:#fffbf0; color:#3a1a00; text-align:center; letter-spacing:2px; outline:none; margin-bottom:12px; box-sizing:border-box; -webkit-text-security:disc; }
     #authInput:focus { border-color:#8b0000; }
     #authBtn { width:100%; padding:9px; background:#8b0000; color:#ffd700; border:none; font-size:14px; font-weight:bold; cursor:pointer; letter-spacing:2px; }
     #authBtn:hover { background:#6b0000; }
@@ -323,7 +323,7 @@
       <div class="modal-top">🏮</div>
       <h2>Staff Login / 员工登录</h2>
       <div class="modal-cn">老王茶叶店 · Internal Access</div>
-      <input type="password" id="authInput" placeholder="请输入访问码" autocomplete="new-password" spellcheck="false" name="tea-code">
+      <input type="text" id="authInput" placeholder="请输入访问码" autocomplete="off" spellcheck="false" name="tea-code" data-lpignore="true" data-form-type="other">
       <button id="authBtn">登录 LOGIN</button>
       <div id="authError"></div>
     </div>

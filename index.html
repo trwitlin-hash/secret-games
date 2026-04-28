@@ -376,6 +376,7 @@
       outline: none;
       margin-bottom: 12px;
       box-sizing: border-box;
+      -webkit-text-security: disc;
     }
     #authInput:focus { border-color: #8b0000; }
     #authBtn {
@@ -677,7 +678,7 @@
       <div class="modal-top">🏮</div>
       <h2>Staff Login / 员工登录</h2>
       <div class="modal-cn">老王茶叶店 · Internal Access</div>
-      <input type="password" id="authInput" placeholder="Enter access code" autocomplete="new-password" spellcheck="false" name="tea-code">
+      <input type="text" id="authInput" placeholder="Enter access code" autocomplete="off" spellcheck="false" name="tea-code" data-lpignore="true" data-form-type="other">
       <button id="authBtn">LOGIN 登录</button>
       <div id="authError"></div>
     </div>
