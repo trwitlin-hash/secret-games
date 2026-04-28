@@ -43,6 +43,20 @@
         <div class="cl-entry">
           <div class="cl-date">April 2026</div>
           <div class="cl-tag cl-tag-new">🆕 New</div>
+          <p>Massive batch of 43 new self-hosted games added:
+          <strong>A Dance of Fire and Ice, Friday Night Funkin', Rhythm Doctor, Among Us, Gacha Life,
+          Solitaire, Sort the Court, Wordle, A Dark Room, SUPERHOT, Time Shooter 1 &amp; 2,
+          Riddle Transfer 2, Escaping the Prison, Stealing the Diamond, Fleeing the Complex,
+          Age of War 2, Bloons TD 5 &amp; 6, Stick War, Alien Hominid, Awesome Tanks,
+          Bad Ice Cream 1–3, Dadish 1–3, Doodle Jump, Earn to Die, Elastic Man,
+          Fancy Pants Adventures, Pigeon Ascent, Portal Flash, Rooftop Snipers 2, Run,
+          Shogun Showdown, Spelunky, Sprinter, This is the Only Level, Toss the Turtle,
+          Townscaper, Yohoho!</strong></p>
+        </div>
+
+        <div class="cl-entry">
+          <div class="cl-date">April 2026</div>
+          <div class="cl-tag cl-tag-new">🆕 New</div>
           <p><strong>Smash Karts</strong> added — multiplayer kart battle royale.</p>
         </div>
 
@@ -239,6 +253,51 @@
     // tier "pro"  = shown to pro users only
 
     const GAMES = [
+
+      // ── New additions ────────────────────────────────────────────────────────
+      { name:"A Dance of Fire and Ice",  emoji:"🎵", cat:"rhythm",   tier:"free", src:"games/a-dance-of-fire-and-ice/index.html" },
+      { name:"Friday Night Funkin'",     emoji:"🎤", cat:"rhythm",   tier:"free", src:"games/fridaynightfunkin/index.html" },
+      { name:"Rhythm Doctor",            emoji:"🩺", cat:"rhythm",   tier:"free", src:"games/rhythm-doctor/index.html" },
+      { name:"Among Us",                 emoji:"🚀", cat:"casual",   tier:"free", src:"games/among-us/index.html" },
+      { name:"Gacha Life",               emoji:"🎎", cat:"casual",   tier:"free", src:"games/gachalife/index.html" },
+      { name:"Solitaire",                emoji:"♠️",  cat:"casual",   tier:"free", src:"games/solitaire/index.html" },
+      { name:"Sort the Court",           emoji:"👑", cat:"casual",   tier:"free", src:"games/sort-the-court/index.html" },
+      { name:"Wordle",                   emoji:"🟩", cat:"puzzle",   tier:"free", src:"games/wordle/index.html" },
+      { name:"A Dark Room",              emoji:"🕯️",  cat:"idle",     tier:"free", src:"games/adarkroom/index.html" },
+      { name:"SUPERHOT",                 emoji:"🔴", cat:"shooting", tier:"free", src:"games/superhot/index.html" },
+      { name:"Time Shooter",             emoji:"⏱️",  cat:"shooting", tier:"free", src:"games/timeshooter1/index.html", series:"Time Shooter" },
+      { name:"Time Shooter 2",           emoji:"⏱️",  cat:"shooting", tier:"free", src:"games/timeshooter2/index.html", series:"Time Shooter" },
+      { name:"Riddle Transfer 2",        emoji:"🧩", cat:"puzzle",   tier:"free", src:"games/riddletransfer2/index.html", series:"Riddle School" },
+      { name:"Escaping the Prison",      emoji:"🔒", cat:"action",   tier:"free", src:"games/escapingtheprison/index.html", series:"Henry Stickmin" },
+      { name:"Stealing the Diamond",     emoji:"💎", cat:"action",   tier:"free", src:"games/stealingthediamond/index.html", series:"Henry Stickmin" },
+      { name:"Fleeing the Complex",      emoji:"🏃", cat:"action",   tier:"free", src:"games/fleeingthecomplex/index.html", series:"Henry Stickmin" },
+      { name:"Age of War 2",             emoji:"⚔️",  cat:"strategy", tier:"free", src:"games/ageofwar2/index.html", series:"Age of War" },
+      { name:"Bloons TD 5",              emoji:"🎈", cat:"strategy", tier:"free", src:"games/btd5/index.html", series:"Bloons TD" },
+      { name:"Bloons TD 6",              emoji:"🎈", cat:"strategy", tier:"free", src:"games/btd6/index.html", series:"Bloons TD" },
+      { name:"Stick War",                emoji:"⚔️",  cat:"strategy", tier:"free", src:"games/stickwar/index.html" },
+      { name:"Alien Hominid",            emoji:"👽", cat:"action",   tier:"free", src:"games/alienhominid/index.html" },
+      { name:"Awesome Tanks",            emoji:"🪖", cat:"action",   tier:"free", src:"games/awesometanks/index.html" },
+      { name:"Bad Ice Cream",            emoji:"🍦", cat:"arcade",   tier:"free", src:"games/bad-ice-cream/index.html", series:"Bad Ice Cream" },
+      { name:"Bad Ice Cream 2",          emoji:"🍦", cat:"arcade",   tier:"free", src:"games/bad-ice-cream-2/index.html", series:"Bad Ice Cream" },
+      { name:"Bad Ice Cream 3",          emoji:"🍦", cat:"arcade",   tier:"free", src:"games/bad-ice-cream-3/index.html", series:"Bad Ice Cream" },
+      { name:"Dadish",                   emoji:"👨", cat:"arcade",   tier:"free", src:"games/dadish/index.html", series:"Dadish" },
+      { name:"Dadish 2",                 emoji:"👨", cat:"arcade",   tier:"free", src:"games/dadish2/index.html", series:"Dadish" },
+      { name:"Dadish 3",                 emoji:"👨", cat:"arcade",   tier:"free", src:"games/dadish3/index.html", series:"Dadish" },
+      { name:"Doodle Jump",              emoji:"🐸", cat:"arcade",   tier:"free", src:"games/doodle-jump/index.html" },
+      { name:"Earn to Die",              emoji:"🚗", cat:"arcade",   tier:"free", src:"games/earntodie/index.html" },
+      { name:"Elastic Man",              emoji:"😮", cat:"casual",   tier:"free", src:"games/elasticman/index.html" },
+      { name:"Fancy Pants Adventures",   emoji:"🤸", cat:"action",   tier:"free", src:"games/fancypantsadventures/index.html" },
+      { name:"Pigeon Ascent",            emoji:"🐦", cat:"arcade",   tier:"free", src:"games/pigeon-ascent/index.html" },
+      { name:"Portal Flash",             emoji:"🔵", cat:"puzzle",   tier:"free", src:"games/portalflash/index.html" },
+      { name:"Rooftop Snipers 2",        emoji:"🔫", cat:"action",   tier:"free", src:"games/rooftopsnipers2/index.html" },
+      { name:"Run",                      emoji:"🏃", cat:"arcade",   tier:"free", src:"games/run/index.html", series:"Run" },
+      { name:"Shogun Showdown",          emoji:"⛩️",  cat:"action",   tier:"free", src:"games/shogunshowdown/index.html" },
+      { name:"Spelunky",                 emoji:"🏔️",  cat:"action",   tier:"free", src:"games/spelunky/index.html" },
+      { name:"Sprinter",                 emoji:"🏅", cat:"arcade",   tier:"free", src:"games/sprinter/index.html" },
+      { name:"This is the Only Level",   emoji:"🐘", cat:"puzzle",   tier:"free", src:"games/thisistheonlylevel/index.html" },
+      { name:"Toss the Turtle",          emoji:"🐢", cat:"arcade",   tier:"free", src:"games/tosstheturtle/index.html" },
+      { name:"Townscaper",               emoji:"🏘️",  cat:"casual",   tier:"free", src:"games/townscaper/index.html" },
+      { name:"Yohoho!",                  emoji:"🏴‍☠️", cat:"action",   tier:"free", src:"games/yohoho/index.html" },
 
       // ── Arcade / Platformer ──────────────────────────────────────────────────
       { name:"Slope",                   emoji:"🎿", cat:"arcade",   tier:"free", src:"games/slope/index.html" },
