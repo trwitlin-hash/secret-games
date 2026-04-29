@@ -384,10 +384,27 @@
       localStorage.setItem('sgLaunchExp',  String(Date.now() + 10000));
 
       if (w) {
-        w.location.href = 'loading.html';
+        const src = location.origin + '/loading.html';
+        w.document.open();
+        w.document.write(
+          '<!DOCTYPE html><html><head><style>' +
+          '*{margin:0;padding:0;box-sizing:border-box}' +
+          'html,body{width:100%;height:100%;overflow:hidden;background:#000}' +
+          'iframe{width:100%;height:100%;border:none;display:block}' +
+          '</style></head><body>' +
+          '<iframe src="' + src + '" allow="fullscreen *; gamepad *; autoplay *" allowfullscreen></iframe>' +
+          '</body></html>'
+        );
+        w.document.close();
       } else {
+        // Popup blocked — overlay a fullscreen iframe on this page instead.
         sessionStorage.setItem('sgCloakToken', '1');
-        window.location.href = 'loading.html';
+        const f = document.createElement('iframe');
+        f.src = 'loading.html';
+        f.allow = 'fullscreen *; gamepad *; autoplay *';
+        f.setAttribute('allowfullscreen', '');
+        f.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:2147483647;background:#000';
+        document.body.appendChild(f);
       }
     }
   </script>
