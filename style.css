@@ -267,6 +267,14 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
 }
 
+.game-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
 /* No results */
 .no-results {
   grid-column: 1/-1;
