@@ -556,15 +556,19 @@
     document.querySelector(".topbar-logo").after(badge);
 
     // Build series filter row from visible games
+    // Only show series that have 4+ games — smaller series clutter the row
+    const SERIES_MIN = 4;
     function buildSeriesRow() {
       const seriesRow = document.getElementById("seriesRow");
       const visibleGames = GAMES.filter(g => userTier === "pro" || g.tier === "free");
-      const seriesSet = new Set(visibleGames.filter(g => g.series).map(g => g.series));
-      if (!seriesSet.size) { seriesRow.style.display = "none"; return; }
+      // Count games per series
+      const seriesCount = {};
+      visibleGames.forEach(g => { if (g.series) seriesCount[g.series] = (seriesCount[g.series] || 0) + 1; });
+      const qualifiedSeries = Object.keys(seriesCount).filter(s => seriesCount[s] >= SERIES_MIN).sort();
+      if (!qualifiedSeries.length) { seriesRow.style.display = "none"; return; }
       seriesRow.style.display = "";
-      // Clear and rebuild
       seriesRow.innerHTML = `<button class="filter-btn series-btn active" data-series="all">All Series</button>`;
-      [...seriesSet].sort().forEach(s => {
+      qualifiedSeries.forEach(s => {
         const btn = document.createElement("button");
         btn.className = "filter-btn series-btn";
         btn.dataset.series = s;
@@ -575,12 +579,16 @@
 
     function render() {
       const q = currentSearch.toLowerCase();
-      const filtered = GAMES.filter(g =>
+      let filtered = GAMES.filter(g =>
         (userTier === "pro" || g.tier === "free") &&
         (currentCat === "all" || g.cat === currentCat) &&
         (currentSeries === "all" || g.series === currentSeries) &&
         g.name.toLowerCase().includes(q)
       );
+      // A-Z sort when browsing everything with no filters active
+      if (currentCat === "all" && currentSeries === "all") {
+        filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+      }
       grid.innerHTML = "";
       if (!filtered.length) {
         grid.innerHTML = `<div class="no-results">No games found 😔</div>`;
