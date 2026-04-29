@@ -734,27 +734,36 @@
       const keyHash = sessionStorage.getItem('sgUnlockedSession');
       const tier    = sessionStorage.getItem('sgUnlockedTier');
 
-      // Stage the auth token so loading.html's guard can claim it
+      // Open the new tab synchronously inside the click handler — browsers
+      // only allow window.open() without blocking when it's user-initiated.
+      const w = window.open('about:blank', '_blank');
+
+      // Stage the auth token for loading.html's guard to claim
       localStorage.setItem('sgLaunchHash', keyHash);
       localStorage.setItem('sgLaunchTier', tier);
       localStorage.setItem('sgLaunchExp',  String(Date.now() + 15000));
 
-      // Black out immediately while fetching
-      document.documentElement.style.background = '#000';
-      document.body.style.background = '#000';
-
-      // Fetch loading.html and replace this page's content with it.
-      // No new tab, no popup — URL bar never moves, loading.html is never visible.
-      fetch('/loading.html')
-        .then(r => r.text())
-        .then(html => {
-          // Inject base tag so every relative path resolves to the real origin
-          html = html.replace('<head>', '<head><base href="' + location.origin + '/">');
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(() => location.reload());
+      if (w) {
+        // Fetch loading.html and write its content directly into the new tab.
+        // URL bar stays "about:blank" — no iframes, no loading.html visible.
+        fetch('/loading.html')
+          .then(r => r.text())
+          .then(html => {
+            html = html.replace('<head>', '<head><base href="' + location.origin + '/">');
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+          });
+      } else {
+        // Popup blocked — overlay fullscreen on current page as fallback
+        sessionStorage.setItem('sgCloakToken', '1');
+        const f = document.createElement('iframe');
+        f.src = 'loading.html';
+        f.allow = 'fullscreen *; gamepad *; autoplay *';
+        f.setAttribute('allowfullscreen', '');
+        f.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:2147483647;background:#000';
+        document.body.appendChild(f);
+      }
     }
   </script>
 <script src="music-player.js"></script>

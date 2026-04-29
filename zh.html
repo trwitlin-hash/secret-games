@@ -377,22 +377,30 @@
       const keyHash = sessionStorage.getItem('sgUnlockedSession');
       const tier    = sessionStorage.getItem('sgUnlockedTier');
 
+      const w = window.open('about:blank', '_blank');
+
       localStorage.setItem('sgLaunchHash', keyHash);
       localStorage.setItem('sgLaunchTier', tier);
       localStorage.setItem('sgLaunchExp',  String(Date.now() + 15000));
 
-      document.documentElement.style.background = '#000';
-      document.body.style.background = '#000';
-
-      fetch('/loading.html')
-        .then(r => r.text())
-        .then(html => {
-          html = html.replace('<head>', '<head><base href="' + location.origin + '/">');
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(() => location.reload());
+      if (w) {
+        fetch('/loading.html')
+          .then(r => r.text())
+          .then(html => {
+            html = html.replace('<head>', '<head><base href="' + location.origin + '/">');
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+          });
+      } else {
+        sessionStorage.setItem('sgCloakToken', '1');
+        const f = document.createElement('iframe');
+        f.src = 'loading.html';
+        f.allow = 'fullscreen *; gamepad *; autoplay *';
+        f.setAttribute('allowfullscreen', '');
+        f.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:2147483647;background:#000';
+        document.body.appendChild(f);
+      }
     }
   </script>
 <script src="music-player.js"></script>
