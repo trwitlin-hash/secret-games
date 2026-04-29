@@ -228,30 +228,32 @@
   <!-- Block direct URL access — must be opened via launchCloaked() -->
   <script>
     (function() {
-      // Path 1: same-tab fallback (sessionStorage token)
+      // Path 1: same-tab fallback when window.open() was blocked
       const sessionToken = sessionStorage.getItem('sgCloakToken');
       if (sessionToken && isUnlocked()) {
         sessionStorage.removeItem('sgCloakToken');
-        return; // already good
+        sessionStorage.setItem('sgInLoadingHtml', '1');
+        return;
       }
 
       // Path 2: new-tab launch via localStorage handoff
-      // index.html writes sgLaunchHash/Tier/Exp; we claim and consume them here.
       const launchHash = localStorage.getItem('sgLaunchHash');
       const launchTier = localStorage.getItem('sgLaunchTier');
       const launchExp  = parseInt(localStorage.getItem('sgLaunchExp') || '0', 10);
       if (launchHash && Date.now() < launchExp) {
-        // Consume immediately so a second tab can't reuse the token
         localStorage.removeItem('sgLaunchHash');
         localStorage.removeItem('sgLaunchTier');
         localStorage.removeItem('sgLaunchExp');
         sessionStorage.setItem('sgUnlockedSession', launchHash);
         sessionStorage.setItem('sgUnlockedTier',    launchTier);
-        if (isUnlocked()) return; // valid key confirmed
+        if (isUnlocked()) {
+          sessionStorage.setItem('sgInLoadingHtml', '1');
+          return;
+        }
       }
 
-      // Path 3: already unlocked in this session (e.g. page refresh)
-      if (isUnlocked()) return;
+      // Path 3: page refresh — only allowed if the flag was set by a prior valid launch
+      if (sessionStorage.getItem('sgInLoadingHtml') && isUnlocked()) return;
 
       // Not authorised — kick back to gate
       sessionStorage.clear();
