@@ -731,16 +731,20 @@
     }
 
     function launchCloaked() {
-      // Use localStorage to pass auth to the new tab — avoids document.write()
-      // which causes "This page was reset" errors on school Chromebooks.
       const keyHash = sessionStorage.getItem('sgUnlockedSession');
       const tier    = sessionStorage.getItem('sgUnlockedTier');
+
+      // Open about:blank first — synchronous open in a click handler is never
+      // blocked by popup blockers. Then set the token and redirect the new tab.
+      const w = window.open('about:blank', '_blank');
+
       localStorage.setItem('sgLaunchHash', keyHash);
       localStorage.setItem('sgLaunchTier', tier);
-      localStorage.setItem('sgLaunchExp',  String(Date.now() + 10000)); // 10s window
+      localStorage.setItem('sgLaunchExp',  String(Date.now() + 10000));
 
-      const w = window.open('loading.html', '_blank');
-      if (!w) {
+      if (w) {
+        w.location.href = 'loading.html';
+      } else {
         // Popup blocked — navigate in same tab instead
         sessionStorage.setItem('sgCloakToken', '1');
         window.location.href = 'loading.html';

@@ -376,11 +376,16 @@
     function launchCloaked() {
       const keyHash = sessionStorage.getItem('sgUnlockedSession');
       const tier    = sessionStorage.getItem('sgUnlockedTier');
+
+      const w = window.open('about:blank', '_blank');
+
       localStorage.setItem('sgLaunchHash', keyHash);
       localStorage.setItem('sgLaunchTier', tier);
       localStorage.setItem('sgLaunchExp',  String(Date.now() + 10000));
-      const w = window.open('loading.html', '_blank');
-      if (!w) {
+
+      if (w) {
+        w.location.href = 'loading.html';
+      } else {
         sessionStorage.setItem('sgCloakToken', '1');
         window.location.href = 'loading.html';
       }
