@@ -322,6 +322,47 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
 }
 
+/* ===== PRO UPSELL BANNER (free tier) ===== */
+.pro-upsell-banner {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(245,166,35,0.1) 0%, rgba(247,201,72,0.05) 100%);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: var(--radius);
+  padding: 13px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.pro-upsell-banner .upsell-icon { font-size: 1.1rem; line-height: 1; }
+.pro-upsell-banner .upsell-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f7c948;
+  letter-spacing: 0.01em;
+}
+
+/* ===== LOCKED GAME CARDS (pro games shown to free users) ===== */
+.game-card.locked {
+  opacity: 0.3;
+  filter: grayscale(1);
+  cursor: default;
+  pointer-events: none;
+}
+.game-card.locked:hover {
+  border-color: var(--border);
+  box-shadow: none;
+}
+.lock-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.4rem;
+  line-height: 1;
+  z-index: 2;
+}
+
 /* ===== GAME MODAL ===== */
 .modal-overlay {
   display: none;
