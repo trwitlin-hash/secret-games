@@ -781,6 +781,24 @@
       const valid  = names.map(n => GAMES.find(g => g.name === n))
                           .filter(g => g && (userTier === 'pro' || g.tier === 'free'));
       row.style.display = valid.length ? '' : 'none';
+      const collapsed = localStorage.getItem('sgRecentCollapsed') === '1';
+      scroll.style.display = collapsed ? 'none' : '';
+      // Rebuild header with toggle
+      const existingHeader = row.querySelector('.recent-header');
+      if (!existingHeader) {
+        const hdr = document.createElement('div');
+        hdr.className = 'recent-header';
+        hdr.innerHTML = `<span class="recent-label">🕒 Recently Played</span><button class="section-toggle" id="recentToggle">${collapsed ? '▶' : '▼'}</button>`;
+        row.insertBefore(hdr, scroll);
+        hdr.addEventListener('click', () => {
+          const nowCollapsed = localStorage.getItem('sgRecentCollapsed') === '1';
+          localStorage.setItem('sgRecentCollapsed', nowCollapsed ? '0' : '1');
+          scroll.style.display = nowCollapsed ? '' : 'none';
+          hdr.querySelector('.section-toggle').textContent = nowCollapsed ? '▼' : '▶';
+        });
+      } else {
+        existingHeader.querySelector('.section-toggle').textContent = collapsed ? '▶' : '▼';
+      }
       scroll.innerHTML = '';
       valid.forEach(g => {
         const c = document.createElement('div');
@@ -795,15 +813,18 @@
     const FEATURED_GAME = "Shell Shockers";
     function buildFeaturedSection() {
       const sec = document.getElementById('featuredSection');
-      // Only show on "all" view with no search/series filter active
       if (currentCat !== 'all' || currentSeries !== 'all' || currentSearch) {
         sec.innerHTML = ''; return;
       }
       const g = GAMES.find(g => g.name === FEATURED_GAME);
       if (!g || (userTier !== 'pro' && g.tier === 'pro')) { sec.innerHTML = ''; return; }
+      const collapsed = localStorage.getItem('sgFeaturedCollapsed') === '1';
       sec.innerHTML = `
-        <div class="featured-label">🌟 Featured Game</div>
-        <div class="featured-card" id="featuredCard">
+        <div class="featured-header">
+          <span class="featured-label">🌟 Featured Game</span>
+          <button class="section-toggle" id="featuredToggle">${collapsed ? '▶' : '▼'}</button>
+        </div>
+        <div class="featured-card" id="featuredCard" style="${collapsed ? 'display:none' : ''}">
           <div class="featured-emoji">${g.emoji}</div>
           <div class="featured-info">
             <div class="featured-name">${g.name}</div>
@@ -813,6 +834,13 @@
           <button class="featured-play-btn">▶ Play Now</button>
         </div>`;
       document.getElementById('featuredCard').addEventListener('click', () => openGame(g));
+      document.getElementById('featuredToggle').addEventListener('click', () => {
+        const card = document.getElementById('featuredCard');
+        const nowCollapsed = localStorage.getItem('sgFeaturedCollapsed') === '1';
+        localStorage.setItem('sgFeaturedCollapsed', nowCollapsed ? '0' : '1');
+        card.style.display = nowCollapsed ? '' : 'none';
+        document.getElementById('featuredToggle').textContent = nowCollapsed ? '▼' : '▶';
+      });
     }
 
     // ─── Card builder (shared) ────────────────────────────────────────────────
