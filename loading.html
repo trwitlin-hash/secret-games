@@ -4,9 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Classroom</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
   <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <script>
+    // Pre-apply saved theme before first paint (avoids flash of default colors)
+    try {
+      var _t = JSON.parse(localStorage.getItem('sgTheme') || '{}');
+      var _r = document.documentElement.style;
+      if (_t.bg)      _r.setProperty('--bg',      _t.bg);
+      if (_t.surface) _r.setProperty('--surface',  _t.surface);
+      if (_t.accent)  _r.setProperty('--accent',   _t.accent);
+      if (_t.border)  _r.setProperty('--border',   _t.border);
+    } catch(e) {}
+  </script>
 </head>
 <body>
 
@@ -16,6 +27,7 @@
     <input type="text" class="search-bar" id="searchBar" placeholder="Search games..." autocomplete="off">
     <button class="btn-reports" id="reportsBtn" style="display:none">📋 Reports</button>
     <button class="btn-changelog" id="changelogBtn">📰 Changelog</button>
+    <button class="btn-theme" id="themeBtn">🎨 Theme</button>
     <button class="btn-lock" id="lockBtn">🔒 Lock</button>
   </nav>
 
@@ -209,6 +221,74 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- Theme panel -->
+  <div class="reports-overlay" id="themeOverlay" style="display:none">
+    <div class="theme-panel">
+      <div class="reports-header">
+        <span>🎨 Customize</span>
+        <button class="btn-close" id="themeCloseBtn">✕ Close</button>
+      </div>
+
+      <div>
+        <div class="theme-section-label">Colors</div>
+        <div class="color-rows">
+          <div class="color-row">
+            <span class="color-label">Background</span>
+            <div class="color-swatch">
+              <input type="color" id="tcBg" value="#111010">
+              <span class="color-hex" id="hxBg">#111010</span>
+            </div>
+          </div>
+          <div class="color-row">
+            <span class="color-label">Cards</span>
+            <div class="color-swatch">
+              <input type="color" id="tcSurface" value="#1c1a1a">
+              <span class="color-hex" id="hxSurface">#1c1a1a</span>
+            </div>
+          </div>
+          <div class="color-row">
+            <span class="color-label">Glow &amp; Accent</span>
+            <div class="color-swatch">
+              <input type="color" id="tcAccent" value="#f97316">
+              <span class="color-hex" id="hxAccent">#f97316</span>
+            </div>
+          </div>
+          <div class="color-row">
+            <span class="color-label">Borders</span>
+            <div class="color-swatch">
+              <input type="color" id="tcBorder" value="#332f2f">
+              <span class="color-hex" id="hxBorder">#332f2f</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="theme-divider">
+
+      <div>
+        <div class="theme-section-label">Background Pattern</div>
+        <div class="pattern-grid">
+          <button class="pattern-btn active" data-pattern="none">None</button>
+          <button class="pattern-btn" data-pattern="dots">Dots</button>
+          <button class="pattern-btn" data-pattern="grid">Grid</button>
+          <button class="pattern-btn" data-pattern="diagonal">Diagonal</button>
+          <button class="pattern-btn" data-pattern="hexagons">Hexagons</button>
+          <button class="pattern-btn" data-pattern="circuit">Circuit</button>
+        </div>
+        <div class="color-row" id="patternColorRow" style="margin-top:10px;display:none">
+          <span class="color-label">Pattern Color</span>
+          <div class="color-swatch">
+            <input type="color" id="tcPattern" value="#ffffff">
+            <span class="color-hex" id="hxPattern">#ffffff</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="theme-divider">
+      <button class="btn-reset-theme" id="resetThemeBtn">↺ Reset to defaults</button>
     </div>
   </div>
 
@@ -919,6 +999,103 @@
     document.getElementById("changelogOverlay").addEventListener("click", e => {
       if (e.target === document.getElementById("changelogOverlay"))
         document.getElementById("changelogOverlay").style.display = "none";
+    });
+
+    // ─── Theme ────────────────────────────────────────────────────────────────
+    const DEFAULT_THEME = {
+      bg: '#111010', surface: '#1c1a1a', accent: '#f97316',
+      border: '#332f2f', pattern: 'none', patternColor: '#ffffff',
+    };
+
+    function h2r(hex) {
+      const h = hex.replace('#','');
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    function lighten(hex, n) {
+      return '#' + h2r(hex).map(v => Math.min(255,v+n).toString(16).padStart(2,'0')).join('');
+    }
+    function patternBg(type, color) {
+      if (type === 'none') return 'none';
+      const [r,g,b] = h2r(color);
+      const c = `rgba(${r},${g},${b},0.07)`;
+      const svgs = {
+        dots:     `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='1.5' fill='${c}'/></svg>`,
+        grid:     `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M40 0H0V40' fill='none' stroke='${c}' stroke-width='0.6'/></svg>`,
+        diagonal: `<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><line x1='0' y1='16' x2='16' y2='0' stroke='${c}' stroke-width='0.8'/></svg>`,
+        hexagons: `<svg xmlns='http://www.w3.org/2000/svg' width='50' height='87'><polygon points='25,2 48,14 48,40 25,52 2,40 2,14' fill='none' stroke='${c}' stroke-width='0.7'/><polygon points='25,54 48,66 48,92 25,104 2,92 2,66' fill='none' stroke='${c}' stroke-width='0.7'/></svg>`,
+        circuit:  `<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><path d='M0 24H18 M30 24H48 M24 0V18 M24 30V48' stroke='${c}' stroke-width='0.7' fill='none'/><circle cx='24' cy='24' r='3.5' fill='none' stroke='${c}' stroke-width='0.7'/><circle cx='0' cy='24' r='1.8' fill='${c}'/><circle cx='48' cy='24' r='1.8' fill='${c}'/><circle cx='24' cy='0' r='1.8' fill='${c}'/><circle cx='24' cy='48' r='1.8' fill='${c}'/></svg>`,
+      };
+      const svg = svgs[type]; if (!svg) return 'none';
+      return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    }
+
+    let curTheme = {};
+    function applyTheme(t) {
+      const root = document.documentElement;
+      root.style.setProperty('--bg',      t.bg);
+      root.style.setProperty('--surface', t.surface);
+      root.style.setProperty('--surface2', lighten(t.surface, 9));
+      root.style.setProperty('--accent',  t.accent);
+      root.style.setProperty('--border',  t.border);
+      const [r,g,b] = h2r(t.accent);
+      root.style.setProperty('--accent-rgb', `${r},${g},${b}`);
+      document.body.style.backgroundImage = patternBg(t.pattern, t.patternColor);
+    }
+    function saveTheme(t) { try { localStorage.setItem('sgTheme', JSON.stringify(t)); } catch(e) {} }
+    function loadTheme() {
+      try { return { ...DEFAULT_THEME, ...JSON.parse(localStorage.getItem('sgTheme') || '{}') }; }
+      catch(e) { return { ...DEFAULT_THEME }; }
+    }
+
+    curTheme = loadTheme();
+    applyTheme(curTheme);
+
+    function syncPanel(t) {
+      [['tcBg','hxBg','bg'],['tcSurface','hxSurface','surface'],
+       ['tcAccent','hxAccent','accent'],['tcBorder','hxBorder','border'],
+       ['tcPattern','hxPattern','patternColor']].forEach(([inp,hex,key]) => {
+        document.getElementById(inp).value = t[key];
+        document.getElementById(hex).textContent = t[key];
+      });
+      document.querySelectorAll('.pattern-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.pattern === t.pattern));
+      document.getElementById('patternColorRow').style.display =
+        t.pattern === 'none' ? 'none' : 'flex';
+    }
+
+    [['tcBg','bg'],['tcSurface','surface'],['tcAccent','accent'],
+     ['tcBorder','border'],['tcPattern','patternColor']].forEach(([id,key]) => {
+      document.getElementById(id).addEventListener('input', e => {
+        curTheme[key] = e.target.value;
+        document.getElementById({tcBg:'hxBg',tcSurface:'hxSurface',tcAccent:'hxAccent',
+          tcBorder:'hxBorder',tcPattern:'hxPattern'}[id]).textContent = e.target.value;
+        applyTheme(curTheme); saveTheme(curTheme);
+      });
+    });
+    document.querySelectorAll('.pattern-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        curTheme.pattern = btn.dataset.pattern;
+        document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('patternColorRow').style.display =
+          curTheme.pattern === 'none' ? 'none' : 'flex';
+        applyTheme(curTheme); saveTheme(curTheme);
+      });
+    });
+    document.getElementById('resetThemeBtn').addEventListener('click', () => {
+      curTheme = { ...DEFAULT_THEME };
+      applyTheme(curTheme); saveTheme(curTheme); syncPanel(curTheme);
+    });
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      syncPanel(curTheme);
+      document.getElementById('themeOverlay').style.display = 'flex';
+    });
+    document.getElementById('themeCloseBtn').addEventListener('click', () => {
+      document.getElementById('themeOverlay').style.display = 'none';
+    });
+    document.getElementById('themeOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('themeOverlay'))
+        document.getElementById('themeOverlay').style.display = 'none';
     });
 
     buildSeriesRow();
