@@ -278,11 +278,21 @@
           <button class="pattern-btn" data-pattern="hexagons">Hexagons</button>
           <button class="pattern-btn" data-pattern="circuit">Circuit</button>
         </div>
-        <div class="color-row" id="patternColorRow" style="margin-top:10px;display:none">
-          <span class="color-label">Pattern Color</span>
-          <div class="color-swatch">
-            <input type="color" id="tcPattern" value="#ffffff">
-            <span class="color-hex" id="hxPattern">#ffffff</span>
+        <div id="patternColorRow" style="margin-top:10px;display:none;flex-direction:column;gap:8px">
+          <div class="color-row">
+            <span class="color-label">Pattern Color</span>
+            <div class="color-swatch">
+              <input type="color" id="tcPattern" value="#ffffff">
+              <span class="color-hex" id="hxPattern">#ffffff</span>
+            </div>
+          </div>
+          <div class="color-row">
+            <span class="color-label">Opacity</span>
+            <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end">
+              <input type="range" id="tcPatternOpacity" min="5" max="100" value="45"
+                style="width:100px;accent-color:var(--accent);cursor:pointer">
+              <span class="color-hex" id="hxPatternOpacity" style="min-width:30px;text-align:right">45%</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1004,7 +1014,7 @@
     // ─── Theme ────────────────────────────────────────────────────────────────
     const DEFAULT_THEME = {
       bg: '#111010', surface: '#1c1a1a', accent: '#f97316',
-      border: '#332f2f', pattern: 'none', patternColor: '#ffffff',
+      border: '#332f2f', pattern: 'none', patternColor: '#ffffff', patternOpacity: 0.45,
     };
 
     function h2r(hex) {
@@ -1014,10 +1024,10 @@
     function lighten(hex, n) {
       return '#' + h2r(hex).map(v => Math.min(255,v+n).toString(16).padStart(2,'0')).join('');
     }
-    function patternBg(type, color) {
+    function patternBg(type, color, opacity) {
       if (type === 'none') return 'none';
       const [r,g,b] = h2r(color);
-      const c = `rgba(${r},${g},${b},0.45)`;
+      const c = `rgba(${r},${g},${b},${opacity ?? 0.45})`;
       const svgs = {
         dots:     `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='1.5' fill='${c}'/></svg>`,
         grid:     `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M40 0H0V40' fill='none' stroke='${c}' stroke-width='0.6'/></svg>`,
@@ -1039,7 +1049,7 @@
       root.style.setProperty('--border',  t.border);
       const [r,g,b] = h2r(t.accent);
       root.style.setProperty('--accent-rgb', `${r},${g},${b}`);
-      document.body.style.backgroundImage = patternBg(t.pattern, t.patternColor);
+      document.body.style.backgroundImage = patternBg(t.pattern, t.patternColor, t.patternOpacity ?? 0.45);
     }
     function saveTheme(t) { try { localStorage.setItem('sgTheme', JSON.stringify(t)); } catch(e) {} }
     function loadTheme() {
@@ -1061,6 +1071,9 @@
         b.classList.toggle('active', b.dataset.pattern === t.pattern));
       document.getElementById('patternColorRow').style.display =
         t.pattern === 'none' ? 'none' : 'flex';
+      const pct = Math.round((t.patternOpacity ?? 0.45) * 100);
+      document.getElementById('tcPatternOpacity').value = pct;
+      document.getElementById('hxPatternOpacity').textContent = pct + '%';
     }
 
     [['tcBg','bg'],['tcSurface','surface'],['tcAccent','accent'],
@@ -1071,6 +1084,11 @@
           tcBorder:'hxBorder',tcPattern:'hxPattern'}[id]).textContent = e.target.value;
         applyTheme(curTheme); saveTheme(curTheme);
       });
+    });
+    document.getElementById('tcPatternOpacity').addEventListener('input', e => {
+      curTheme.patternOpacity = parseInt(e.target.value) / 100;
+      document.getElementById('hxPatternOpacity').textContent = e.target.value + '%';
+      applyTheme(curTheme); saveTheme(curTheme);
     });
     document.querySelectorAll('.pattern-btn').forEach(btn => {
       btn.addEventListener('click', () => {
