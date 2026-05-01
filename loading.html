@@ -325,7 +325,6 @@
 
   <!-- Recently Played row -->
   <div class="recent-row" id="recentRow" style="display:none">
-    <div class="recent-label">🕒 Recently Played</div>
     <div class="recent-scroll" id="recentScroll"></div>
   </div>
 
@@ -608,7 +607,7 @@
       { name:"Bloxorz",                emoji:"🟫", cat:"puzzle",   tier:"free", src:"games/bloxorz/index.html",                                       desc:"Roll a rectangular block through puzzles without falling off the edge." },
 
       // ── Neruvy collection ──────────────────────────────────────────────────────
-      { name:"Shell Shockers",          emoji:"🥚",  cat:"io",       tier:"free", src:"games/shell-shockers/index.html",                               desc:"Egg-based multiplayer shooter — crack other eggs before they crack yours." },
+
       { name:"Smash Karts",             emoji:"💥",  cat:"action",   tier:"free", src:"games/smash-karts/index.html",                                  desc:"Multiplayer kart arena — collect weapons and blast other players." },
       { name:"Time Shooter 3: SWAT",    emoji:"🔫", cat:"shooting", tier:"free", src:"games/time-shooter-3-swat/index.html",                          desc:"Bullet-time tactical shooter — clear rooms in slow motion as SWAT." },
       { name:"Survival Race",           emoji:"🏁", cat:"driving",  tier:"free", src:"games/survival-race/index.html",                                desc:"Race while fighting rivals — knock opponents out to claim victory." },
@@ -810,7 +809,7 @@
     }
 
     // ─── Featured game ────────────────────────────────────────────────────────
-    const FEATURED_GAME = "Shell Shockers";
+    const FEATURED_GAME = "Smash Karts";
     function buildFeaturedSection() {
       const sec = document.getElementById('featuredSection');
       if (currentCat !== 'all' || currentSeries !== 'all' || currentSearch) {
