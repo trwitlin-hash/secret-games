@@ -1,19 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Rob Brainrot 2</title>
+  <link rel="stylesheet" href="game.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+    body { margin:0; padding:0; background:#000; overflow:hidden; }
+    #unity-container { position:fixed; inset:0; }
+    #unity-canvas { width:100%; height:100%; display:block; }
+    #unity-loading-bar { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; }
+    #unity-progress-bar-empty { width:141px; height:18px; margin-top:10px; background:url(loading.png) no-repeat center; }
+    #unity-progress-bar-full { width:0; height:18px; background:url(loading.png) no-repeat center; }
   </style>
 </head>
 <body>
-  <iframe
-    src="https://gamea.azgame.io/rob-brainrot-2/"
-    allow="fullscreen *; gamepad *; autoplay *"
-    allowfullscreen
-    scrolling="no"
-  ></iframe>
+  <div id="unity-container">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/rob-brainrot-2-v26022503.loader.js";
+    var config = {
+      dataUrl:      buildUrl + "/rob-brainrot-2-v26022503.data.unityweb",
+      frameworkUrl: buildUrl + "/rob-brainrot-2-v26022503.framework.js.unityweb",
+      codeUrl:      buildUrl + "/rob-brainrot-2-v26022503.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "self-hosted",
+      productName: "Rob Brainrot 2",
+      productVersion: "26022503"
+    };
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = function() {
+      createUnityInstance(document.querySelector("#unity-canvas"), config, function(progress) {
+        document.querySelector("#unity-progress-bar-full").style.width = (100 * progress) + "%";
+      }).then(function(unityInstance) {
+        document.querySelector("#unity-loading-bar").style.display = "none";
+      });
+    };
+    document.body.appendChild(script);
+  </script>
 </body>
 </html>

@@ -1,13 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Escape Road 3</title>
+  <link rel="stylesheet" href="game.css">
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+    body { margin:0; padding:0; background:#000; overflow:hidden; }
+    #unity-container { position:fixed; inset:0; }
+    #unity-canvas { width:100%; height:100%; display:block; }
+    #unity-loading-bar { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; }
+    #unity-progress-bar-empty { width:141px; height:18px; margin-top:10px; background:url(loading.png) no-repeat center; }
+    #unity-progress-bar-full { width:0; height:18px; background:url(loading.png) no-repeat center; }
   </style>
 </head>
 <body>
-  <iframe src="https://gamea.azgame.io/escape-road-3/" allowfullscreen allow="fullscreen *; gamepad *"></iframe>
+  <div id="unity-container">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/escape-road-3-v26042906.loader.js";
+    var config = {
+      dataUrl:      buildUrl + "/escape-road-3-v26042906.data.unityweb",
+      frameworkUrl: buildUrl + "/escape-road-3-v26042906.framework.js.unityweb",
+      codeUrl:      buildUrl + "/escape-road-3-v26042906.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "self-hosted",
+      productName: "Escape Road 3",
+      productVersion: "26042906"
+    };
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = function() {
+      createUnityInstance(document.querySelector("#unity-canvas"), config, function(progress) {
+        document.querySelector("#unity-progress-bar-full").style.width = (100 * progress) + "%";
+      }).then(function(unityInstance) {
+        document.querySelector("#unity-loading-bar").style.display = "none";
+      });
+    };
+    document.body.appendChild(script);
+  </script>
 </body>
 </html>
