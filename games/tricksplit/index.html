@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
-  </style>
+    <script src="adSense.js"></script>
+    
+   <title>TrickSplit.io</title>
+    <meta charset="UTF-8">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        
+        #iframe-container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+		<script type="text/javascript" src="patch/js/null.js?//66games.io/controls.js"></script>
+	
+	
 </head>
-<body>
-  <iframe
-    src="https://noodlelover1.codeberg.page/coreus/games/tricksplit/"
-    allow="fullscreen *; gamepad *; autoplay *"
-    allowfullscreen
-    scrolling="no"
-  ></iframe>
+<body style="overflow:hidden;">
+    <div id="iframe-container">
+        <iframe src="https://tricksplit.io/"></iframe>
+    </div>
 </body>
 </html>

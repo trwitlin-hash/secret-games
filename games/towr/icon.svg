@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a3a"/>
+      <stop offset="100%" style="stop-color:#0a0a1a"/>
+    </linearGradient>
+    <linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff"/>
+      <stop offset="100%" style="stop-color:#4a9eff"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100" height="100" fill="url(#bgGrad)" rx="15"/>
+  
+  <!-- Coreus dots inspired elements -->
+  <circle cx="30" cy="30" r="8" fill="#fff" opacity="0.9"/>
+  <circle cx="70" cy="70" r="8" fill="#fff" opacity="0.9"/>
+  <path d="M34 34 L66 66" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+  
+  <!-- Tower base (hexagon) -->
+  <polygon points="50,35 65,42 65,58 50,65 35,58 35,42" fill="#1a3a5a" stroke="#00ffff" stroke-width="2"/>
+  
+  <!-- Tower turret -->
+  <rect x="42" y="30" width="16" height="20" fill="url(#towerGrad)" rx="2"/>
+  <circle cx="50" cy="40" r="8" fill="#00ffff"/>
+  
+  <!-- Cannon barrel -->
+  <rect x="47" y="18" width="6" height="15" fill="#4a9eff" rx="1"/>
+  
+  <!-- Enemy shapes around -->
+  <polygon points="80,25 88,32 88,44 80,51 72,44 72,32" fill="#ff4444" opacity="0.8"/>
+  <polygon points="20,70 26,76 26,86 20,92 14,86 14,76" fill="#ff8800" opacity="0.8"/>
+  <circle cx="85" cy="80" r="6" fill="#aa44ff" opacity="0.8"/>
+</svg>

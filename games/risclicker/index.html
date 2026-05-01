@@ -1,19 +1,306 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+    body {
+      background-image: linear-gradient(to left, #868df7, #b46ef5);
+      font-family: 'verdana', sans-serif;
+      text-align: center;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 380px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin: 5px 0 15px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      font-size: 18px;
+      margin: 5px 0;
+    }
+
+    .button {
+      padding: 8px 25px;
+      background-image: linear-gradient(to bottom, #7a7fef, #a864fe);
+      cursor: pointer;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 6px auto;
+      width: 90%;
+      display: block;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+      line-height: 1.2;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      background-image: linear-gradient(to bottom, #9ca3ff, #d09aff);
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .button:hover::after {
+      left: 100%;
+    }
+
+    .counter {
+      background-image: linear-gradient(to bottom, #7a7fef, #a864fe);
+      padding: 8px 20px;
+      width: 85%;
+      font-size: 20px;
+      border-radius: 25px;
+      color: white;
+      margin: 10px auto;
+      display: block;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #game, #end, #secretEnd {
+      display: none;
+    }
+
+    #foreuse, #superForeuse {
+      display: none;
+    }
+
+    /* Bouton invisible (cheat) */
+    .cheat-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0.1;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .cheat-button:hover {
+      opacity: 0.8;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      transform: scale(1.1);
+    }
+
+    /* Style pour la fin secrète */
+    #secretEnd h1 {
+      font-size: 32px;
+      color: #ffd700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+    }
+
+    #secretEnd p {
+      font-size: 16px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
+
 <body>
-  <iframe
-    src="https://noodlelover1.codeberg.page/coreus/games/risclicker/"
-    allow="fullscreen *; gamepad *; autoplay *"
-    allowfullscreen
-    scrolling="no"
-  ></iframe>
+  <div class="container">
+    <!-- Bouton invisible pour tricher -->
+    <button class="cheat-button" onclick="cheat()"></button>
+
+    <!-- Page d'accueil -->
+    <div id="home">
+      <h1>🏆 Riskigold 🏆</h1>
+      <p>Click to become rich!</p>
+      <button class="button" onclick="startGame()">⚡ Start Game ⚡</button>
+    </div>
+
+    <!-- Page du jeu -->
+    <div id="game">
+      <h1>⛏️ Clicker ⛏️</h1>
+      <button id="clicker" class="button">💰 Mine Gold! 💰</button>
+      <div id="counter" class="counter">0 gold</div>
+      <button class="button" id="upgrade">⛏️ Better Pickaxe (50g) ⛏️</button>
+      <button class="button" id="foreuse">⚡ Foreuse (200g) ⚡</button>
+      <button class="button" id="superForeuse">💎 Super Foreuse (350g) 💎</button>
+      <button class="button" onclick="returnHome()">🏠 Return Home 🏠</button>
+    </div>
+
+    <!-- Page de fin normale (200 CPC) -->
+    <div id="end">
+      <h1>🎉 Victory! 🎉</h1>
+      <p>You reached <strong>200 CPC</strong> and won!</p>
+      <button class="button" onclick="continueGame()">🔄 Continue 🔄</button>
+      <button class="button" onclick="restartGame()">🆕 Restart 🆕</button>
+    </div>
+
+    <!-- Page de fin secrète (1000 CPC) -->
+    <div id="secretEnd">
+      <h1>🌟 Secret Ending Unlocked! 🌟</h1>
+      <p>🎊 <strong>Félicitations !</strong> 🎊<br>
+         Vous avez atteint <strong>1000 CPC</strong> !<br>
+         Merci d'avoir joué à <strong>Riskigold</strong> et découvert cette fin secrète. 🔥
+      </p>
+      <button class="button" onclick="restartGame()">🆕 Recommencer 🆕</button>
+      <button class="button" onclick="quitGame()">🚪 Quitter 🚪</button>
+    </div>
+  </div>
+
+  <script>
+    let counter = 0;
+    let cpc = 1;
+    let hasSeenNormalEnd = false;
+    let foreuseUses = 0;
+    let foreuseUnlocked = false; // Pour suivre si la foreuse est débloquée
+    const counterDisplay = document.getElementById('counter');
+    const clickerBtn = document.getElementById('clicker');
+    const upgradeBtn = document.getElementById('upgrade');
+    const foreuseBtn = document.getElementById('foreuse');
+    const superForeuseBtn = document.getElementById('superForeuse');
+
+    function updateDisplay() {
+      counterDisplay.textContent = counter + ' gold (+' + cpc + '/click)';
+    }
+
+    function startGame() {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+    }
+
+    function returnHome() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+    }
+
+    function continueGame() {
+      hasSeenNormalEnd = true;
+      document.getElementById('end').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+    }
+
+    function restartGame() {
+      counter = 0;
+      cpc = 1;
+      hasSeenNormalEnd = false;
+      foreuseUses = 0;
+      foreuseUnlocked = false;
+      foreuseBtn.style.display = 'none';
+      superForeuseBtn.style.display = 'none';
+      document.getElementById('end').style.display = 'none';
+      document.getElementById('secretEnd').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+      updateDisplay();
+    }
+
+    function quitGame() {
+      alert("Merci d'avoir joué ! À bientôt ! 👋");
+      restartGame();
+    }
+
+    function showNormalEnd() {
+      if (!hasSeenNormalEnd) {
+        document.getElementById('game').style.display = 'none';
+        document.getElementById('end').style.display = 'block';
+      }
+    }
+
+    function showSecretEnd() {
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('secretEnd').style.display = 'block';
+    }
+
+    function cheat() {
+      cpc += 198;
+      counter += 51;
+      updateDisplay();
+      alert("✨ Cheat activated: +198 CPC and +51 gold!");
+    }
+
+    clickerBtn.addEventListener('click', () => {
+      counter += cpc;
+      updateDisplay();
+
+      if (cpc >= 1000) {
+        showSecretEnd();
+      } else if (cpc >= 200 && !hasSeenNormalEnd) {
+        showNormalEnd();
+      }
+    });
+
+    upgradeBtn.addEventListener('click', () => {
+      if (counter >= 50) {
+        counter -= 50;
+        cpc += 1;
+        foreuseUnlocked = true;
+        foreuseBtn.style.display = 'block'; // Affiche la foreuse après l'achat de la Better Pickaxe
+        updateDisplay();
+      } else {
+        alert("❌ Not enough gold! Need 50g.");
+      }
+    });
+
+    foreuseBtn.addEventListener('click', () => {
+      if (counter >= 200) {
+        counter -= 200;
+        cpc += 5;
+        foreuseUses += 1;
+        updateDisplay();
+
+        if (foreuseUses >= 5) {
+          superForeuseBtn.style.display = 'block'; // Affiche la Super Foreuse après 5 utilisations
+        }
+      } else {
+        alert("❌ Not enough gold! Need 200g.");
+      }
+    });
+
+    superForeuseBtn.addEventListener('click', () => {
+      if (counter >= 350) {
+        counter -= 350;
+        cpc += 10;
+        updateDisplay();
+      } else {
+        alert("❌ Not enough gold! Need 350g.");
+      }
+    });
+  </script>
 </body>
 </html>

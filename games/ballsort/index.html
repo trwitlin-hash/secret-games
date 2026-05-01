@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
-  </style>
+    <title>Ball Sort Puzzle</title>
+    <link rel="icon" type="image/x-icon" href="media/graphics/misc/16x16.png" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no, minimal-ui"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" type="text/css" href="game.css">
+    <script type="text/javascript" src="game.js"></script>
+    <link rel="manifest" href="yandex-manifest.json">
 </head>
-<body>
-  <iframe
-    src="https://noodlelover1.codeberg.page/coreus/games/ballsort/"
-    allow="fullscreen *; gamepad *; autoplay *"
-    allowfullscreen
-    scrolling="no"
-  ></iframe>
-</body>
+
+<div class="gamecenter-activator"></div>
+
+<body onload="setTimeout(function(){window.scrollTo(0,1)},1);">
+    <!--body-->
+        <div id="xloader">
+            <div id="game"><canvas id="canvas"></canvas></div>
+            <div id="orientate"><img src="media/graphics/misc/orientation.png" /></div>
+            <div id="play" class="play" onclick=""></div>
+        </div>
+      <script src="js/analytics_ubg_v1_4.js"></script>
+      <script src="js/ubg235_client_v1_1.js"></script>
+    </body>
 </html>
