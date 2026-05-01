@@ -1017,7 +1017,7 @@
     function patternBg(type, color) {
       if (type === 'none') return 'none';
       const [r,g,b] = h2r(color);
-      const c = `rgba(${r},${g},${b},0.25)`;
+      const c = `rgba(${r},${g},${b},0.45)`;
       const svgs = {
         dots:     `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='1.5' fill='${c}'/></svg>`,
         grid:     `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M40 0H0V40' fill='none' stroke='${c}' stroke-width='0.6'/></svg>`,
