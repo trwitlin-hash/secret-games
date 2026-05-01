@@ -289,9 +289,9 @@
           <div class="color-row">
             <span class="color-label">Opacity</span>
             <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end">
-              <input type="range" id="tcPatternOpacity" min="5" max="100" value="45"
-                style="width:100px;accent-color:var(--accent);cursor:pointer">
-              <span class="color-hex" id="hxPatternOpacity" style="min-width:30px;text-align:right">45%</span>
+              <input type="number" id="tcPatternOpacity" min="5" max="100" value="45"
+                style="width:58px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:0.8rem;padding:4px 6px;text-align:center;outline:none;">
+              <span class="color-hex">%</span>
             </div>
           </div>
         </div>
@@ -1073,7 +1073,7 @@
         t.pattern === 'none' ? 'none' : 'flex';
       const pct = Math.round((t.patternOpacity ?? 0.45) * 100);
       document.getElementById('tcPatternOpacity').value = pct;
-      document.getElementById('hxPatternOpacity').textContent = pct + '%';
+
     }
 
     [['tcBg','bg'],['tcSurface','surface'],['tcAccent','accent'],
@@ -1087,7 +1087,7 @@
     });
     document.getElementById('tcPatternOpacity').addEventListener('input', e => {
       curTheme.patternOpacity = parseInt(e.target.value) / 100;
-      document.getElementById('hxPatternOpacity').textContent = e.target.value + '%';
+
       applyTheme(curTheme); saveTheme(curTheme);
     });
     document.querySelectorAll('.pattern-btn').forEach(btn => {
