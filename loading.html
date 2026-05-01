@@ -28,6 +28,7 @@
     <button class="btn-reports" id="reportsBtn" style="display:none">📋 Reports</button>
     <button class="btn-changelog" id="changelogBtn">📰 Changelog</button>
     <button class="btn-theme" id="themeBtn">🎨 Theme</button>
+    <button class="btn-random" id="randomBtn">🎲 Random</button>
     <button class="btn-lock" id="lockBtn">🔒 Lock</button>
   </nav>
 
@@ -314,12 +315,22 @@
     <button class="filter-btn" data-cat="strategy">Strategy</button>
     <button class="filter-btn" data-cat="sandbox">Sandbox</button>
     <button class="filter-btn" data-cat="idle">Idle</button>
+    <button class="filter-btn" data-cat="io">IO</button>
   </div>
 
   <!-- Series filters (auto-populated) -->
   <div class="filter-row" id="seriesRow" style="display:none">
     <button class="filter-btn series-btn active" data-series="all">All Series</button>
   </div>
+
+  <!-- Recently Played row -->
+  <div class="recent-row" id="recentRow" style="display:none">
+    <div class="recent-label">🕒 Recently Played</div>
+    <div class="recent-scroll" id="recentScroll"></div>
+  </div>
+
+  <!-- Featured game -->
+  <div class="featured-section" id="featuredSection"></div>
 
   <!-- Game grid -->
   <div class="games-grid" id="gamesGrid"></div>
@@ -445,7 +456,7 @@
       { name:"OvO",                     emoji:"⬛", cat:"arcade",   tier:"pro",  src:"games/ovo/index.html",                                           desc:"Ultra-precise platformer with wall jumps, slides, and satisfying movement." },
       { name:"Tunnel Rush",             emoji:"🌀", cat:"arcade",   tier:"pro",  src:"games/tunnel-rush/index.html",                                   desc:"Dodge obstacles at blinding speed inside a neon 3D tunnel." },
       { name:"Geometry Dash",           emoji:"🔷", cat:"arcade",   tier:"pro",  src:"games/geometrydash/index.html",                                  desc:"Jump and fly through rhythm-based obstacle courses. Timing is everything." },
-      { name:"Paper.io 2",              emoji:"📄", cat:"arcade",   tier:"pro",  src:"games/paperio/index.html",                                       desc:"Expand your territory by drawing loops — don't get cut off." },
+      { name:"Paper.io 2",              emoji:"📄", cat:"io",       tier:"pro",  src:"games/paperio/index.html",                                       desc:"Expand your territory by drawing loops — don't get cut off." },
       { name:"Block Blast",             emoji:"🧱", cat:"arcade",   tier:"pro",  src:"games/blockblast/index.html",                                    desc:"Fit blocks onto a grid and clear lines to keep the board alive." },
       { name:"Crazy Cattle 3D",         emoji:"🐄", cat:"arcade",   tier:"pro",  src:"games/crazy-cattle-3d/index.html",                               desc:"Battle royale for cows — headbutt rivals off the arena to win." },
       { name:"Velocity Rush",           emoji:"⚡", cat:"arcade",   tier:"pro",  src:"games/velocity-rush/index.html",                                 desc:"High-speed futuristic racer — hit insane speeds without crashing." },
@@ -462,7 +473,7 @@
 
       // ── Shooting ──────────────────────────────────────────────────────────────
       { name:"FPS Strike",              emoji:"🎯", cat:"shooting", tier:"free", src:"games/fps-strike/index.html",                                    desc:"Counter-Strike-style first-person shooter with fast multiplayer action." },
-      { name:"Guerrillas.io",           emoji:"💂", cat:"shooting", tier:"pro",  src:"games/guerrillas-io/index.html",                                 desc:"Tactical multiplayer shooter — work with your team to control the map." },
+      { name:"Guerrillas.io",           emoji:"💂", cat:"io",       tier:"pro",  src:"games/guerrillas-io/index.html",                                 desc:"Tactical multiplayer shooter — work with your team to control the map." },
 
       // ── Driving ───────────────────────────────────────────────────────────────
       { name:"Madalin Stunt Cars Pro",  emoji:"🏎️",  cat:"driving",  tier:"pro",  src:"games/madalin-stunt-cars-pro/index.html",                        desc:"Open-world stunt driving with a huge map and exotic supercars." },
@@ -597,6 +608,7 @@
       { name:"Bloxorz",                emoji:"🟫", cat:"puzzle",   tier:"free", src:"games/bloxorz/index.html",                                       desc:"Roll a rectangular block through puzzles without falling off the edge." },
 
       // ── Neruvy collection ──────────────────────────────────────────────────────
+      { name:"Shell Shockers",          emoji:"🥚",  cat:"io",       tier:"free", src:"games/shell-shockers/index.html",                               desc:"Egg-based multiplayer shooter — crack other eggs before they crack yours." },
       { name:"Smash Karts",             emoji:"💥",  cat:"action",   tier:"free", src:"games/smash-karts/index.html",                                  desc:"Multiplayer kart arena — collect weapons and blast other players." },
       { name:"Time Shooter 3: SWAT",    emoji:"🔫", cat:"shooting", tier:"free", src:"games/time-shooter-3-swat/index.html",                          desc:"Bullet-time tactical shooter — clear rooms in slow motion as SWAT." },
       { name:"Survival Race",           emoji:"🏁", cat:"driving",  tier:"free", src:"games/survival-race/index.html",                                desc:"Race while fighting rivals — knock opponents out to claim victory." },
@@ -683,7 +695,7 @@
       { name:"Hill Climb Racing", emoji:"🏔️", cat:"driving", tier:"pro", src:"games/hcr/index.html", desc:"Upgrade your vehicle and conquer increasingly brutal hills. The classic." },
       { name:"Hextris", emoji:"🔺", cat:"puzzle", tier:"pro", src:"games/hextris/index.html", desc:"Hexagonal Tetris — rotate a hexagon and match colored blocks." },
       { name:"Hide and Smash", emoji:"🪚", cat:"action", tier:"free", src:"games/hideandsmash/index.html", desc:"Smash hiding enemies out of objects before they escape." },
-      { name:"Hole.io", emoji:"🕳️", cat:"action", tier:"pro", src:"games/holeio/index.html", desc:"Control a growing hole and swallow entire cities. Multiplayer chaos." },
+      { name:"Hole.io", emoji:"🕳️", cat:"io", tier:"pro", src:"games/holeio/index.html", desc:"Control a growing hole and swallow entire cities. Multiplayer chaos." },
       { name:"Hollow Knight", emoji:"🐛", cat:"action", tier:"pro", src:"games/hollowknight/index.html", desc:"Deep underground, a bug knight explores a fallen kingdom. A masterpiece." },
       { name:"Idle Dice", emoji:"🎲", cat:"idle", tier:"pro", src:"games/idledice/index.html", desc:"Roll dice to earn points, buy upgrades, unlock new dice. Deeply satisfying idle." },
       { name:"Idle Lumber", emoji:"🪵", cat:"idle", tier:"pro", src:"games/idlelumber/index.html", desc:"Idle lumber empire — chop trees, hire workers, automate the sawmill." },
@@ -710,7 +722,7 @@
       { name:"Shootz", emoji:"🎯", cat:"action", tier:"free", src:"games/shootz/index.html", desc:"Minimalist shooter — tap to fire, time your shots to survive." },
       { name:"Hollow Knight: Silksong", emoji:"🕸️", cat:"action", tier:"pro", src:"games/silksong/index.html", desc:"Silksong in the browser. Hornet fights through a new kingdom of horrors." },
       { name:"Slice It All", emoji:"🔪", cat:"arcade", tier:"free", src:"games/slice/index.html", desc:"Slice through objects racing toward you. Don't miss a single one." },
-      { name:"Snowball.io", emoji:"❄️", cat:"action", tier:"pro", src:"games/snowballio/index.html", desc:"Roll a snowball and knock other players off icy platforms. Gets huge." },
+      { name:"Snowball.io", emoji:"❄️", cat:"io", tier:"pro", src:"games/snowballio/index.html", desc:"Roll a snowball and knock other players off icy platforms. Gets huge." },
       { name:"Stack Ball", emoji:"🎯", cat:"arcade", tier:"free", src:"games/stackball/index.html", desc:"Smash a ball through rotating platforms — avoid the dark ones or die." },
       { name:"Stardew Valley", emoji:"🌾", cat:"sandbox", tier:"pro", src:"games/stardew/index.html", desc:"Leave the city, fix up a farm, befriend the townsfolk. Endlessly relaxing." },
       { name:"State.io", emoji:"🗺️", cat:"strategy", tier:"pro", src:"games/stateio/index.html", desc:"Conquer states by sending troops. Simple concept, surprisingly addictive." },
@@ -729,11 +741,11 @@
       { name:"Traffic Mania", emoji:"🚦", cat:"arcade", tier:"free", src:"games/trafficmania/index.html", desc:"Direct traffic through intersections without causing a pile-up." },
       { name:"Traffic Rush", emoji:"🚗", cat:"arcade", tier:"free", src:"games/trafficrush/index.html", desc:"Swipe cars through the intersection — timing is everything." },
       { name:"Tree City", emoji:"🌳", cat:"idle", tier:"free", src:"games/treecity/index.html", desc:"Grow trees to build a city. Idle upgrade loop with a chill nature vibe." },
-      { name:"Trick Split", emoji:"🔱", cat:"action", tier:"pro", src:"games/tricksplit/index.html", desc:"Split and merge your cells to outsmart opponents. Agario with tricks." },
+      { name:"Trick Split", emoji:"🔱", cat:"io", tier:"pro", src:"games/tricksplit/index.html", desc:"Split and merge your cells to outsmart opponents. Agario with tricks." },
       { name:"Tube Clicker", emoji:"▶️", cat:"idle", tier:"free", src:"games/tubeclicker/index.html", desc:"Start a YouTube channel, gain subscribers, go viral. Idle empire builder." },
       { name:"Village Craft", emoji:"🏘️", cat:"sandbox", tier:"pro", src:"games/villagecraft/index.html", desc:"Build a medieval village from nothing — craft, gather, expand." },
       { name:"Waterworks", emoji:"💧", cat:"puzzle", tier:"free", src:"games/waterworks/index.html", desc:"Connect pipes to route water to all the targets. Logic puzzler." },
-      { name:"Yohoho.io", emoji:"🏴‍☠️", cat:"action", tier:"pro", src:"games/yohoho/index.html", desc:"Pirate battle royale — fight other pirates on a shrinking island." },
+      { name:"Yohoho.io", emoji:"🏴‍☠️", cat:"io", tier:"pro", src:"games/yohoho/index.html", desc:"Pirate battle royale — fight other pirates on a shrinking island." },
       { name:"Zombie Road", emoji:"🧟", cat:"action", tier:"pro", src:"games/zombieroad/index.html", desc:"Drive through zombie-infested roads and smash the undead." },
 
     ];
@@ -743,6 +755,91 @@
     let currentSeries = "all";
     let currentSearch = "";
     const grid = document.getElementById("gamesGrid");
+
+    // ─── Favorites ────────────────────────────────────────────────────────────
+    function getFavs() { return JSON.parse(localStorage.getItem('sgFavs') || '[]'); }
+    function saveFavs(arr) { localStorage.setItem('sgFavs', JSON.stringify(arr)); }
+    function isFav(name) { return getFavs().includes(name); }
+    function toggleFav(name) {
+      let f = getFavs();
+      f = f.includes(name) ? f.filter(n => n !== name) : [...f, name];
+      saveFavs(f);
+    }
+
+    // ─── Recently Played ──────────────────────────────────────────────────────
+    function getRecent() { return JSON.parse(localStorage.getItem('sgRecent') || '[]'); }
+    function addRecent(name) {
+      let r = getRecent().filter(n => n !== name);
+      r.unshift(name);
+      localStorage.setItem('sgRecent', JSON.stringify(r.slice(0, 8)));
+      buildRecentRow();
+    }
+    function buildRecentRow() {
+      const names  = getRecent();
+      const row    = document.getElementById('recentRow');
+      const scroll = document.getElementById('recentScroll');
+      const valid  = names.map(n => GAMES.find(g => g.name === n))
+                          .filter(g => g && (userTier === 'pro' || g.tier === 'free'));
+      row.style.display = valid.length ? '' : 'none';
+      scroll.innerHTML = '';
+      valid.forEach(g => {
+        const c = document.createElement('div');
+        c.className = 'recent-card';
+        c.innerHTML = `<span class="recent-emoji">${g.emoji}</span><span class="recent-name">${g.name}</span>`;
+        c.addEventListener('click', () => openGame(g));
+        scroll.appendChild(c);
+      });
+    }
+
+    // ─── Featured game ────────────────────────────────────────────────────────
+    const FEATURED_GAME = "Shell Shockers";
+    function buildFeaturedSection() {
+      const sec = document.getElementById('featuredSection');
+      // Only show on "all" view with no search/series filter active
+      if (currentCat !== 'all' || currentSeries !== 'all' || currentSearch) {
+        sec.innerHTML = ''; return;
+      }
+      const g = GAMES.find(g => g.name === FEATURED_GAME);
+      if (!g || (userTier !== 'pro' && g.tier === 'pro')) { sec.innerHTML = ''; return; }
+      sec.innerHTML = `
+        <div class="featured-label">🌟 Featured Game</div>
+        <div class="featured-card" id="featuredCard">
+          <div class="featured-emoji">${g.emoji}</div>
+          <div class="featured-info">
+            <div class="featured-name">${g.name}</div>
+            <div class="featured-cat">${g.cat}${g.tier === 'pro' ? ' · ⭐ Pro' : ' · Free'}</div>
+            <div class="featured-desc">${g.desc || ''}</div>
+          </div>
+          <button class="featured-play-btn">▶ Play Now</button>
+        </div>`;
+      document.getElementById('featuredCard').addEventListener('click', () => openGame(g));
+    }
+
+    // ─── Card builder (shared) ────────────────────────────────────────────────
+    function makeCard(g) {
+      const card = document.createElement("div");
+      card.className = "game-card";
+      const favActive = isFav(g.name) ? ' active' : '';
+      card.innerHTML = `
+        <div class="game-thumb">
+          <span class="game-emoji">${g.emoji}</span>
+          ${g.tier === 'pro' && userTier === 'pro' ? '<span class="pro-badge">⭐ Pro</span>' : ''}
+          <button class="fav-btn${favActive}" data-name="${g.name}" title="Favorite">❤</button>
+        </div>
+        <div class="game-info">
+          <div class="game-name">${g.name}</div>
+          <div class="game-tag">${g.cat}${g.series ? ' · ' + g.series : ''}</div>
+          ${g.desc ? `<div class="game-desc">${g.desc}</div>` : ''}
+        </div>`;
+      card.querySelector('.fav-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        toggleFav(g.name);
+        e.currentTarget.classList.toggle('active');
+        render();
+      });
+      card.addEventListener("click", () => openGame(g));
+      return card;
+    }
 
     // Show tier badge in topbar
     const badge = document.createElement("span");
@@ -774,6 +871,7 @@
 
     function render() {
       const q = currentSearch.toLowerCase();
+      buildFeaturedSection();
 
       function matchFilters(g) {
         return (currentCat === "all" || g.cat === currentCat) &&
@@ -792,52 +890,38 @@
 
       grid.innerHTML = "";
 
+      // Favorites section at the top (any tier, any filter)
+      const favGames = GAMES.filter(g =>
+        isFav(g.name) && matchFilters(g) && (userTier === 'pro' || g.tier === 'free')
+      );
+      if (favGames.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'section-label';
+        lbl.textContent = '❤️ Favorites';
+        grid.appendChild(lbl);
+        favGames.forEach(g => grid.appendChild(makeCard(g)));
+        const div = document.createElement('hr');
+        div.className = 'section-divider';
+        grid.appendChild(div);
+      }
+
       if (userTier === "pro") {
         // Pro users: show everything together, sorted
         const all = currentCat === "all" && currentSeries === "all"
           ? [...freeGames, ...proGames].sort((a, b) => a.name.localeCompare(b.name))
           : [...freeGames, ...proGames];
-        if (!all.length) { grid.innerHTML = `<div class="no-results">No games found 😔</div>`; return; }
-        all.forEach(g => {
-          const card = document.createElement("div");
-          card.className = "game-card";
-          card.innerHTML = `
-            <div class="game-thumb">
-              <span class="game-emoji">${g.emoji}</span>
-              ${g.tier === 'pro' ? '<span class="pro-badge">⭐ Pro</span>' : ''}
-            </div>
-            <div class="game-info">
-              <div class="game-name">${g.name}</div>
-              <div class="game-tag">${g.cat}${g.series ? ' · ' + g.series : ''}</div>
-              ${g.desc ? `<div class="game-desc">${g.desc}</div>` : ''}
-            </div>`;
-          card.addEventListener("click", () => openGame(g));
-          grid.appendChild(card);
-        });
+        if (!all.length && !favGames.length) { grid.innerHTML = `<div class="no-results">No games found 😔</div>`; return; }
+        all.forEach(g => grid.appendChild(makeCard(g)));
         return;
       }
 
       // Free tier: show free games, then locked pro section
-      if (!freeGames.length && !proGames.length) {
+      if (!freeGames.length && !proGames.length && !favGames.length) {
         grid.innerHTML = `<div class="no-results">No games found 😔</div>`;
         return;
       }
 
-      freeGames.forEach(g => {
-        const card = document.createElement("div");
-        card.className = "game-card";
-        card.innerHTML = `
-          <div class="game-thumb">
-            <span class="game-emoji">${g.emoji}</span>
-          </div>
-          <div class="game-info">
-            <div class="game-name">${g.name}</div>
-            <div class="game-tag">${g.cat}${g.series ? ' · ' + g.series : ''}</div>
-            ${g.desc ? `<div class="game-desc">${g.desc}</div>` : ''}
-          </div>`;
-        card.addEventListener("click", () => openGame(g));
-        grid.appendChild(card);
-      });
+      freeGames.forEach(g => grid.appendChild(makeCard(g)));
 
       if (proGames.length) {
         const banner = document.createElement("div");
@@ -893,6 +977,17 @@
       render();
     });
 
+    // ─── Random game ──────────────────────────────────────────────────────────
+    document.getElementById("randomBtn").addEventListener("click", () => {
+      const pool = GAMES.filter(g =>
+        (userTier === 'pro' || g.tier === 'free') &&
+        (currentCat === 'all' || g.cat === currentCat) &&
+        (currentSeries === 'all' || g.series === currentSeries)
+      );
+      if (!pool.length) return;
+      openGame(pool[Math.floor(Math.random() * pool.length)]);
+    });
+
     // ─── Lock ─────────────────────────────────────────────────────────────────
     document.getElementById("lockBtn").addEventListener("click", () => {
       lock();
@@ -919,6 +1014,7 @@
 
     function openGame(g) {
       currentGame = g;
+      addRecent(g.name);
       modalTitle.textContent = g.emoji + " " + g.name;
       modal.classList.add("open");
       document.body.style.overflow = "hidden";
@@ -1117,6 +1213,7 @@
     });
 
     buildSeriesRow();
+    buildRecentRow();
     render();
   </script>
   <style>

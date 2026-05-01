@@ -598,6 +598,143 @@ a:hover { text-decoration: underline; }
 }
 .btn-clear-reports:hover { background: var(--error); color: #fff; }
 
+/* Random button */
+.btn-random {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-random:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Recently Played row */
+.recent-row { padding: 14px 20px 0; }
+.recent-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.recent-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.recent-scroll::-webkit-scrollbar { display: none; }
+.recent-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+  min-width: 64px;
+}
+.recent-card:hover { border-color: var(--accent); }
+.recent-emoji { font-size: 1.4rem; line-height: 1; }
+.recent-name {
+  font-size: 0.65rem;
+  color: var(--muted);
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Featured section */
+.featured-section { padding: 14px 20px 0; }
+.featured-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.featured-card {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: inset 0 0 40px rgba(var(--accent-rgb), 0.06);
+}
+.featured-card:hover {
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(var(--accent-rgb), 0.2);
+}
+.featured-emoji { font-size: 2.8rem; line-height: 1; flex-shrink: 0; }
+.featured-info { flex: 1; min-width: 0; }
+.featured-name { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.featured-cat { font-size: 0.72rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+.featured-desc { font-size: 0.82rem; color: var(--muted); margin-top: 6px; }
+.featured-play-btn {
+  padding: 9px 18px;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Favorite button on cards */
+.fav-btn {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  background: none;
+  border: none;
+  color: var(--border);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+  z-index: 2;
+  transition: color 0.15s, transform 0.15s;
+  opacity: 0;
+}
+.game-card:hover .fav-btn { opacity: 1; }
+.fav-btn.active { color: #e25555; opacity: 1; }
+.fav-btn:hover { color: #e25555; transform: scale(1.2); }
+
+/* Section headers/dividers inside the grid */
+.section-label {
+  grid-column: 1 / -1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-top: 4px;
+}
+.section-divider {
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 6px 0 2px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .gate-card { padding: 32px 20px; }
