@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mountain Bike Racer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+    canvas { display: block; max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+// Polyfill ctx.roundRect for older Chrome/Chromebook versions
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+    r = Math.min(r, w/2, h/2);
+    this.moveTo(x+r, y);
+    this.arcTo(x+w, y,   x+w, y+h, r);
+    this.arcTo(x+w, y+h, x,   y+h, r);
+    this.arcTo(x,   y+h, x,   y,   r);
+    this.arcTo(x,   y,   x+w, y,   r);
+    this.closePath();
+  };
+}
+
+// Responsive sizing
+function resize() {
+  const aspect = 16 / 9;
+  let w = window.innerWidth;
+  let h = window.innerHeight;
+  if (w / h > aspect) w = h * aspect;
+  else h = w / aspect;
+  canvas.width = Math.floor(w);
+  canvas.height = Math.floor(h);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const W = () => canvas.width;
+const H = () => canvas.height;
+
+// ─── TERRAIN ────────────────────────────────────────────────────────────────
+const TSTEP = 6;
+const pts = [];
+let tMaxX = 0;
+
+function rawY(x) {
+  const h = canvas.height;
+  let y = h * 0.55;
+  y -= Math.sin(x * 0.0025) * h * 0.18;
+  y -= Math.sin(x * 0.006  + 1.2) * h * 0.10;
+  y -= Math.sin(x * 0.014  + 2.8) * h * 0.06;
+  y -= Math.sin(x * 0.031  + 0.5) * h * 0.03;
+  y -= Math.sin(x * 0.07   + 3.1) * h * 0.015;
+  return Math.max(h * 0.22, Math.min(h * 0.82, y));
+}
+
+function genTerrain(toX) {
+  while (tMaxX < toX + W() * 3) {
+    pts.push({ x: tMaxX, y: rawY(tMaxX) });
+    tMaxX += TSTEP;
+  }
+}
+
+function terrainY(x) {
+  const i = Math.floor(x / TSTEP);
+  if (i < 0) return canvas.height * 0.55;
+  if (i >= pts.length - 1) { genTerrain(x + W()); return rawY(x); }
+  const t = (x - pts[i].x) / TSTEP;
+  return pts[i].y + t * (pts[i + 1].y - pts[i].y);
+}
+
+function terrainAngle(x) {
+  const d = 5;
+  return Math.atan2(terrainY(x + d) - terrainY(x - d), d * 2);
+}
+
+// ─── SCENERY (trees + clouds) ─────────────────────────────────────────────
+const trees = [];
+const clouds = [];
+
+function seedScenery() {
+  for (let x = 200; x < 60000; x += 120 + Math.random() * 180) {
+    trees.push({ x, wobble: Math.random() * 10 });
+  }
+  for (let i = 0; i < 80; i++) {
+    clouds.push({
+      wx: Math.random() * 60000,
+      wy: (0.05 + Math.random() * 0.18) * canvas.height,
+      r:  25 + Math.random() * 40,
+      spd: 0.1 + Math.random() * 0.2
+    });
+  }
+}
+seedScenery();
+
+// ─── GAME STATE ──────────────────────────────────────────────────────────────
+const WHEEL_R = () => canvas.width * 0.018;
+const WHEEL_BASE = () => canvas.width * 0.072;
+
+let bx, spd, lean, crashed, started, dist, best, crashTimer;
+let rearWheelRot = 0, frontWheelRot = 0;
+let dustParts = [];
+
+function reset() {
+  bx       = canvas.width * 0.15;
+  spd      = 0;
+  lean     = 0;
+  crashed  = false;
+  started  = false;
+  dist     = 0;
+  crashTimer = 0;
+  dustParts = [];
+}
+
+reset();
+best = 0;
+
+const keys = {};
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (!started && (e.code === 'ArrowUp' || e.code === 'ArrowRight')) started = true;
+  if (crashed && (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp')) {
+    best = Math.max(best, Math.round(dist));
+    reset();
+    started = true;
+  }
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+});
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// Touch controls
+let touchLean = 0, touchAccel = false, touchBrake = false;
+canvas.addEventListener('touchstart', handleTouch, {passive:false});
+canvas.addEventListener('touchmove', handleTouch, {passive:false});
+canvas.addEventListener('touchend', () => { touchLean = 0; touchAccel = false; touchBrake = false; });
+function handleTouch(e) {
+  e.preventDefault();
+  if (!started) started = true;
+  if (crashed) { best = Math.max(best, Math.round(dist)); reset(); started = true; return; }
+  const t = e.touches[0];
+  const rx = t.clientX / window.innerWidth;
+  const ry = t.clientY / window.innerHeight;
+  touchAccel = ry < 0.5;
+  touchBrake = ry >= 0.5 && rx < 0.3;
+  touchLean = rx > 0.6 ? 1 : rx < 0.4 ? -1 : 0;
+}
+
+// ─── UPDATE ───────────────────────────────────────────────────────────────────
+function update(dt) {
+  if (!started || crashed) return;
+
+  const accel      = keys['ArrowUp']    || keys['KeyW']  || touchAccel;
+  const brake      = keys['ArrowDown']  || keys['KeyS']  || touchBrake;
+  const leanFwd    = keys['ArrowRight'] || keys['KeyD']  || touchLean > 0;
+  const leanBack   = keys['ArrowLeft']  || keys['KeyA']  || touchLean < 0;
+
+  const angle = terrainAngle(bx);
+  const h = canvas.height;
+
+  // Speed
+  const maxSpd  = h * 0.75;
+  const accelR  = h * 0.45;
+  const brakeR  = h * 0.7;
+  const fric    = h * 0.08;
+  const grav    = 9.8 * h * 0.12;
+
+  if (accel)  spd += accelR * dt;
+  if (brake)  spd -= brakeR * dt;
+  spd -= Math.sin(angle) * grav * dt;
+  if (!accel && spd > 0) { spd -= fric * dt; if (spd < 0) spd = 0; }
+  spd = Math.max(-h * 0.04, Math.min(maxSpd, spd));
+
+  if (spd > 0) {
+    bx += spd * dt;
+    dist = Math.max(dist, (bx - canvas.width * 0.15) / 10);
+  }
+
+  // Wheel rotation
+  const wCirc = 2 * Math.PI * WHEEL_R();
+  rearWheelRot  += (spd * dt) / wCirc * (Math.PI * 2);
+  frontWheelRot += (spd * dt) / wCirc * (Math.PI * 2);
+
+  // Lean
+  const leanSpd  = 3.2;
+  const leanRet  = 2.2;
+  const maxLean  = Math.PI * 0.44;
+
+  if (leanFwd)       lean += leanSpd * dt;
+  else if (leanBack) lean -= leanSpd * dt;
+  else               lean *= (1 - leanRet * dt);
+
+  // Gravity pulls lean with slope
+  lean += angle * 0.35 * dt;
+  lean = Math.max(-maxLean, Math.min(maxLean, lean));
+
+  // Dust particles when going fast
+  if (spd > h * 0.2 && Math.random() < 0.4) {
+    const wb = WHEEL_BASE();
+    const wy = terrainY(bx - wb/2) + WHEEL_R() * 0.5;
+    dustParts.push({ x: bx - wb/2 - spd*dt*0.5, y: wy, vx: -spd*0.3 - Math.random()*30, vy: -Math.random()*40, life: 1 });
+  }
+  dustParts = dustParts.filter(p => {
+    p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 80 * dt; p.life -= dt * 1.8;
+    return p.life > 0;
+  });
+
+  // Crash: too much lean or reversing off start
+  const totalLean = lean + angle;
+  if (Math.abs(totalLean) > Math.PI * 0.52 || bx < 30) {
+    crashed = true;
+  }
+
+  genTerrain(bx + W() * 3);
+}
+
+// ─── DRAW HELPERS ─────────────────────────────────────────────────────────────
+function wheel(x, y, r, rot, crashed) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI*2);
+  ctx.fillStyle = crashed ? '#555' : '#1a1a1a';
+  ctx.fill();
+  // Tyre
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = r * 0.28;
+  ctx.stroke();
+  // Rim
+  ctx.strokeStyle = '#aaa';
+  ctx.lineWidth = r * 0.1;
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 0.62, 0, Math.PI*2);
+  ctx.stroke();
+  // Spokes
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = r * 0.06;
+  const spokes = 6;
+  for (let i = 0; i < spokes; i++) {
+    const a = rot + i * (Math.PI * 2 / spokes);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a) * r * 0.6, Math.sin(a) * r * 0.6);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawTree(wx, cameraX) {
+  const sx = wx - cameraX;
+  const h = canvas.height;
+  const ty = terrainY(wx);
+  if (sx < -50 || sx > W() + 50) return;
+  const scale = h / 450;
+  // Trunk
+  ctx.fillStyle = '#5D3A1A';
+  ctx.fillRect(sx - 5*scale, ty - 40*scale, 10*scale, 40*scale);
+  // Canopy layers
+  ctx.fillStyle = '#2E7D32';
+  ctx.beginPath(); ctx.moveTo(sx, ty - 100*scale); ctx.lineTo(sx - 28*scale, ty - 42*scale); ctx.lineTo(sx + 28*scale, ty - 42*scale); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#388E3C';
+  ctx.beginPath(); ctx.moveTo(sx, ty - 130*scale); ctx.lineTo(sx - 22*scale, ty - 72*scale); ctx.lineTo(sx + 22*scale, ty - 72*scale); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#43A047';
+  ctx.beginPath(); ctx.moveTo(sx, ty - 155*scale); ctx.lineTo(sx - 14*scale, ty - 104*scale); ctx.lineTo(sx + 14*scale, ty - 104*scale); ctx.closePath(); ctx.fill();
+}
+
+function drawCloud(cloud, cameraX) {
+  const sx = cloud.wx - cameraX * 0.15;
+  if (sx < -cloud.r * 3 || sx > W() + cloud.r * 3) return;
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  const r = cloud.r * (canvas.height / 450);
+  ctx.beginPath();
+  ctx.arc(sx, cloud.wy, r, 0, Math.PI*2);
+  ctx.arc(sx + r * 0.9, cloud.wy - r * 0.2, r * 0.75, 0, Math.PI*2);
+  ctx.arc(sx - r * 0.7, cloud.wy + r * 0.1, r * 0.6, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function drawBike(sx, sy, angle) {
+  ctx.save();
+  ctx.translate(sx, sy);
+  ctx.rotate(angle);
+
+  const h = canvas.height;
+  const wr = WHEEL_R();
+  const wb = WHEEL_BASE();
+  const scale = h / 450;
+
+  const rWx = -wb / 2, fWx = wb / 2;
+  const seatX = rWx + wb * 0.2,  seatY = -wr - 15*scale;
+  const headX = fWx - wb * 0.06, headY = -wr - 22*scale;
+  const bbX   = wb * 0.05,       bbY   = -wr + 2*scale;
+
+  // Frame
+  ctx.strokeStyle = '#e63946';
+  ctx.lineWidth   = 3.5*scale;
+  ctx.lineJoin    = 'round';
+  ctx.lineCap     = 'round';
+
+  // Chain stay
+  ctx.beginPath(); ctx.moveTo(bbX, bbY); ctx.lineTo(rWx, 0); ctx.stroke();
+  // Seat stay
+  ctx.beginPath(); ctx.moveTo(seatX, seatY); ctx.lineTo(rWx, 0); ctx.stroke();
+  // Seat tube
+  ctx.beginPath(); ctx.moveTo(bbX, bbY); ctx.lineTo(seatX, seatY); ctx.stroke();
+  // Down tube
+  ctx.beginPath(); ctx.moveTo(seatX, seatY); ctx.lineTo(bbX, bbY); ctx.stroke();
+  // Top tube
+  ctx.beginPath(); ctx.moveTo(seatX, seatY); ctx.lineTo(headX, headY); ctx.stroke();
+  // Down tube to head
+  ctx.beginPath(); ctx.moveTo(bbX, bbY); ctx.lineTo(headX, headY); ctx.stroke();
+  // Fork
+  ctx.strokeStyle = '#aaa';
+  ctx.lineWidth   = 2.5*scale;
+  ctx.beginPath(); ctx.moveTo(headX, headY); ctx.lineTo(fWx, 0); ctx.stroke();
+
+  // Handlebar
+  ctx.strokeStyle = '#bbb';
+  ctx.lineWidth   = 2*scale;
+  ctx.beginPath();
+  ctx.moveTo(headX - 4*scale, headY - 9*scale);
+  ctx.lineTo(headX + 7*scale, headY - 6*scale);
+  ctx.stroke();
+
+  // Saddle
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth   = 4.5*scale;
+  ctx.lineCap     = 'round';
+  ctx.beginPath();
+  ctx.moveTo(seatX - 9*scale, seatY - 1);
+  ctx.lineTo(seatX + 5*scale, seatY - 1);
+  ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  // Wheels
+  wheel(rWx, 0, wr, rearWheelRot, crashed);
+  wheel(fWx, 0, wr, frontWheelRot, crashed);
+
+  // ─── Rider ───
+  ctx.save();
+  ctx.translate(seatX, seatY);
+  ctx.rotate(lean);
+
+  const torsoLen = 22*scale;
+  const headR    = 7*scale;
+
+  // Lower legs
+  ctx.strokeStyle = '#1565C0';
+  ctx.lineWidth   = 5*scale;
+  ctx.lineCap     = 'round';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(4*scale, 10*scale);
+  ctx.lineTo(bbX - seatX + 2, bbY - seatY);
+  ctx.stroke();
+
+  // Torso
+  ctx.strokeStyle = '#1976D2';
+  ctx.lineWidth   = 5.5*scale;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-3*scale, -torsoLen);
+  ctx.stroke();
+
+  // Arms (reaching to bars, roughly)
+  ctx.strokeStyle = '#1976D2';
+  ctx.lineWidth   = 4*scale;
+  ctx.beginPath();
+  ctx.moveTo(-2*scale, -torsoLen * 0.7);
+  ctx.lineTo(headX - seatX + 5*scale, headY - seatY - 7*scale);
+  ctx.stroke();
+
+  // Head
+  ctx.fillStyle   = '#FFCC80';
+  ctx.strokeStyle = '#E65100';
+  ctx.lineWidth   = 1.5*scale;
+  ctx.beginPath();
+  ctx.arc(-3*scale, -torsoLen - headR, headR, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+
+  // Helmet
+  ctx.fillStyle = '#D32F2F';
+  ctx.beginPath();
+  ctx.arc(-3*scale, -torsoLen - headR - 1, headR + 1.5, Math.PI * 1.05, Math.PI * 1.95);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#EF5350';
+  ctx.beginPath();
+  ctx.arc(-3*scale, -torsoLen - headR, headR + 1, -Math.PI * 0.9, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // Visor
+  ctx.fillStyle = '#555';
+  ctx.beginPath();
+  ctx.moveTo(-3*scale - headR, -torsoLen - headR * 0.3);
+  ctx.lineTo(-3*scale + headR * 0.5, -torsoLen - headR * 0.3);
+  ctx.lineTo(-3*scale + headR * 0.7, -torsoLen - headR * 0.1);
+  ctx.lineTo(-3*scale - headR, -torsoLen - headR * 0.1);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore(); // rider
+  ctx.restore(); // bike
+}
+
+// ─── DRAW ─────────────────────────────────────────────────────────────────────
+function draw(cameraX) {
+  const w = W(), h = H();
+
+  // Sky
+  const sky = ctx.createLinearGradient(0, 0, 0, h);
+  sky.addColorStop(0,   '#1565C0');
+  sky.addColorStop(0.4, '#42A5F5');
+  sky.addColorStop(0.75,'#B3E5FC');
+  sky.addColorStop(1,   '#E1F5FE');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, w, h);
+
+  // Far mountains (parallax 0.2)
+  ctx.fillStyle = '#78909C';
+  ctx.beginPath(); ctx.moveTo(0, h);
+  for (let sx = 0; sx <= w; sx += 18) {
+    const mx = cameraX * 0.2 + sx;
+    const my = h * 0.42 - Math.sin(mx * 0.006) * h * 0.12 - Math.sin(mx * 0.011) * h * 0.08;
+    ctx.lineTo(sx, my);
+  }
+  ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+
+  // Near mountains (parallax 0.5)
+  ctx.fillStyle = '#546E7A';
+  ctx.beginPath(); ctx.moveTo(0, h);
+  for (let sx = 0; sx <= w; sx += 12) {
+    const mx = cameraX * 0.5 + sx;
+    const my = h * 0.52 - Math.sin(mx * 0.004 + 1) * h * 0.14 - Math.sin(mx * 0.009 + 2) * h * 0.07;
+    ctx.lineTo(sx, my);
+  }
+  ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+
+  // Clouds
+  clouds.forEach(c => drawCloud(c, cameraX));
+
+  // Trees (behind terrain)
+  trees.forEach(t => drawTree(t.x, cameraX));
+
+  // Terrain
+  const si = Math.max(0, Math.floor((cameraX - TSTEP) / TSTEP));
+  const ei = Math.min(pts.length - 1, Math.ceil((cameraX + w + TSTEP) / TSTEP));
+  if (ei > si) {
+    // Grass fill
+    ctx.fillStyle = '#388E3C';
+    ctx.beginPath();
+    ctx.moveTo(pts[si].x - cameraX, h);
+    for (let i = si; i <= ei; i++) ctx.lineTo(pts[i].x - cameraX, pts[i].y);
+    ctx.lineTo(pts[ei].x - cameraX, h);
+    ctx.closePath(); ctx.fill();
+
+    // Dirt underlay
+    ctx.fillStyle = '#795548';
+    ctx.beginPath();
+    ctx.moveTo(pts[si].x - cameraX, h);
+    for (let i = si; i <= ei; i++) ctx.lineTo(pts[i].x - cameraX, pts[i].y + 12);
+    ctx.lineTo(pts[ei].x - cameraX, h);
+    ctx.closePath(); ctx.fill();
+
+    // Grass top line
+    ctx.strokeStyle = '#66BB6A';
+    ctx.lineWidth   = 3;
+    ctx.lineJoin    = 'round';
+    ctx.beginPath();
+    for (let i = si; i <= ei; i++) {
+      if (i === si) ctx.moveTo(pts[i].x - cameraX, pts[i].y);
+      else ctx.lineTo(pts[i].x - cameraX, pts[i].y);
+    }
+    ctx.stroke();
+  }
+
+  // Dust particles
+  dustParts.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life * 0.5;
+    ctx.fillStyle = '#c8b07a';
+    const r = (1 + p.life * 2) * (canvas.height / 450);
+    ctx.beginPath(); ctx.arc(p.x - cameraX, p.y, r, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+
+  // Bike
+  const bikeScreenX = bx - cameraX;
+  const bikeAngle   = terrainAngle(bx);
+  const bikeGroundY = terrainY(bx) - WHEEL_R() * 0.3;
+  drawBike(bikeScreenX, bikeGroundY, bikeAngle);
+
+  // HUD
+  const h2 = canvas.height;
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.beginPath(); ctx.roundRect(10, 10, 220, 60, 8);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${h2 * 0.038}px Arial`;
+  ctx.textAlign = 'left';
+  ctx.fillText(`${Math.round(dist).toLocaleString()} m`, 22, 38);
+  ctx.font = `${h2 * 0.028}px Arial`;
+  ctx.fillStyle = '#ccc';
+  ctx.fillText(`${Math.round(Math.max(0, spd) / 10)} km/h   Best: ${Math.round(best)} m`, 22, 62);
+
+  // Controls reminder (first 3 seconds of a run)
+  if (started && dist < 5) {
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath(); ctx.roundRect(w/2 - 200, h - 52, 400, 38, 8);
+    ctx.fill();
+    ctx.fillStyle = '#ffe';
+    ctx.font = `${h2 * 0.026}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText('↑ Gas  ↓ Brake  ← Lean Back  → Lean Forward', w/2, h - 28);
+  }
+
+  // Start screen
+  if (!started && !crashed) {
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${h2 * 0.085}px Arial`;
+    ctx.fillText('Mountain Bike Racer', w/2, h * 0.38);
+
+    ctx.font = `${h2 * 0.038}px Arial`;
+    ctx.fillStyle = '#cde';
+    ctx.fillText('↑ Gas   ↓ Brake   ← Lean Back   → Lean Forward', w/2, h * 0.54);
+
+    ctx.font = `bold ${h2 * 0.042}px Arial`;
+    ctx.fillStyle = '#FFD54F';
+    ctx.fillText('Press ↑ to Start!', w/2, h * 0.68);
+  }
+
+  // Crash screen
+  if (crashed) {
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#EF5350';
+    ctx.font = `bold ${h2 * 0.1}px Arial`;
+    ctx.fillText('CRASHED!', w/2, h * 0.36);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = `${h2 * 0.05}px Arial`;
+    ctx.fillText(`Distance: ${Math.round(dist)} m`, w/2, h * 0.52);
+
+    const prevBest = Math.max(best, Math.round(dist));
+    if (Math.round(dist) >= best && best > 0) {
+      ctx.fillStyle = '#FFD54F';
+      ctx.font = `bold ${h2 * 0.042}px Arial`;
+      ctx.fillText('🏆 New Best!', w/2, h * 0.62);
+    } else {
+      ctx.fillStyle = '#aaa';
+      ctx.font = `${h2 * 0.035}px Arial`;
+      ctx.fillText(`Best: ${prevBest} m`, w/2, h * 0.62);
+    }
+
+    ctx.fillStyle = '#FFD54F';
+    ctx.font = `${h2 * 0.038}px Arial`;
+    ctx.fillText('Press ↑ or Space to Restart', w/2, h * 0.76);
+  }
+}
+
+// ─── LOOP ─────────────────────────────────────────────────────────────────────
+let last = null;
+
+function loop(ts) {
+  if (!last) last = ts;
+  const dt = Math.min((ts - last) / 1000, 0.05);
+  last = ts;
+
+  update(dt);
+
+  const cameraX = Math.max(0, bx - W() * 0.32);
+  draw(cameraX);
+
+  requestAnimationFrame(loop);
+}
+
+genTerrain(W() * 4);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
