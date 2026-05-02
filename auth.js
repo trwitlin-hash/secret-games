@@ -53,8 +53,7 @@ function isMaster() {
 
 // Dev/tester key — can see requests panel + reports panel
 function isDev() {
-  const h = sessionStorage.getItem(AUTH_KEY);
-  return h === MASTER_HASH || h === DEV_HASH;
+  return sessionStorage.getItem(AUTH_KEY) === DEV_HASH;
 }
 
 function lock() {
