@@ -986,6 +986,22 @@
       let freeGames = GAMES.filter(g => g.tier === "free" && matchFilters(g));
       let proGames  = GAMES.filter(g => g.tier === "pro"  && matchFilters(g));
 
+      // Free tier: only show one game per series — rest are locked as upsell
+      if (userTier !== "pro") {
+        const seenSeries = new Set();
+        const kept = [], overflow = [];
+        freeGames.forEach(g => {
+          if (g.series && seenSeries.has(g.series)) {
+            overflow.push(g); // bumped to locked section
+          } else {
+            if (g.series) seenSeries.add(g.series);
+            kept.push(g);
+          }
+        });
+        freeGames = kept;
+        proGames  = [...overflow, ...proGames];
+      }
+
       // A-Z sort when browsing without a category filter
       if (currentCat === "all" && currentSeries === "all") {
         freeGames = [...freeGames].sort((a, b) => a.name.localeCompare(b.name));
