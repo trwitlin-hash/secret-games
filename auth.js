@@ -44,7 +44,7 @@ async function tryUnlock(inputKey) {
   return true;
 }
 
-const MASTER_HASH = "3c24a22bee85ee04968579c51f996bfe2e53b218a2bc1028e76492b417da4a83";
+const MASTER_HASH = "5e8ce5c5d088bc25b8308dba4c873ef24003cb42ffab8adcf7035eeee0bff5d4"; // OGSTUMPS
 
 function isMaster() {
   return sessionStorage.getItem(AUTH_KEY) === MASTER_HASH;

@@ -717,9 +717,23 @@
     });
     document.getElementById('authBtn').addEventListener('click', attemptUnlock);
 
+    // Joke key hashes (SHA-256 of uppercased value)
+    const JOKE_KEYS = new Set([
+      "1900f14b36512a5c7c3883680bd80675e4b0b2168c9dd4bc0668d937bbd45d4a", // ARCADE2026
+      "99e0d594f041e21eab87a3771f8ee23000f09a0fa70b754b7e1eb07113198c59", // LEKIRKE
+    ]);
+
     async function attemptUnlock() {
       const val = document.getElementById('authInput').value.trim();
       if (!val) return;
+      const hash = await hashKey(val);
+      if (JOKE_KEYS.has(hash)) {
+        document.getElementById('authError').textContent = 'nuh uh cuh 💀';
+        setTimeout(() => {
+          window.location.href = 'https://www.google.com/search?q=i%27m+not+doing+my+work';
+        }, 900);
+        return;
+      }
       const ok = await tryUnlock(val);
       if (ok) {
         closeModal();

@@ -13,12 +13,13 @@
 
 const KEYS = {
   // ── Permanent Pro (never expires) ─────────────────────────────────────
-  "3c24a22bee85ee04968579c51f996bfe2e53b218a2bc1028e76492b417da4a83":
+  // OGSTUMPS
+  "5e8ce5c5d088bc25b8308dba4c873ef24003cb42ffab8adcf7035eeee0bff5d4":
     { tier: "pro", expiry: null },
 
-  // ── Friends key (permanent pro, no session detection) ─────────────────
-  "99e0d594f041e21eab87a3771f8ee23000f09a0fa70b754b7e1eb07113198c59":
-    { tier: "pro", expiry: null },
+  // ── Joke / troll keys → handled in index.html, NOT valid here ──────────
+  // LEKIRKE  → "nuh uh cuh" + redirect to Google "i'm not doing my work"
+  // ARCADE2026 → same
 
   // ── 30-day Pro keys (expire 2026-05-15) ───────────────────────────────
   "dba1f3996b2d1857f2ecdcf18a7441249e02f41a0aa52b07576e6af4292d69b0":
