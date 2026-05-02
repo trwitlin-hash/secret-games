@@ -13,8 +13,12 @@
 
 const KEYS = {
   // ── Permanent Pro (never expires) ─────────────────────────────────────
-  // OGSTUMPS
+  // OGSTUMPS (master)
   "5e8ce5c5d088bc25b8308dba4c873ef24003cb42ffab8adcf7035eeee0bff5d4":
+    { tier: "pro", expiry: null },
+
+  // KEY_748291047362 (dev / tester — sees requests panel)
+  "3c24a22bee85ee04968579c51f996bfe2e53b218a2bc1028e76492b417da4a83":
     { tier: "pro", expiry: null },
 
   // ── Joke / troll keys → handled in index.html, NOT valid here ──────────

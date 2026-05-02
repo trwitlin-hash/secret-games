@@ -33,15 +33,34 @@
     <button class="btn-lock" id="lockBtn">🔒 Lock</button>
   </nav>
 
-  <!-- Reports panel (master only) -->
+  <!-- Reports panel (dev / master only) -->
   <div class="reports-overlay" id="reportsOverlay" style="display:none">
-    <div class="reports-panel">
+    <div class="reports-panel" style="max-width:520px;max-height:85vh;overflow-y:auto">
       <div class="reports-header">
-        <span>📋 Broken Game Reports</span>
+        <span>🛠️ Dev Panel</span>
         <button class="btn-close" id="reportsCloseBtn">✕ Close</button>
       </div>
-      <div id="reportsList"></div>
-      <button class="btn-clear-reports" id="clearReportsBtn">🗑 Clear All</button>
+
+      <!-- Game requests section -->
+      <div style="padding:16px 20px 4px">
+        <div style="font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+                    color:var(--text-muted,#666);margin-bottom:10px">📬 Game Requests</div>
+        <div id="requestsList"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn-clear-reports" id="clearRequestsBtn" style="flex:1">🗑 Clear Requests</button>
+        </div>
+        <p id="webhookStatus" style="font-size:0.75rem;margin-top:8px;color:var(--text-muted,#666)"></p>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border,#333);margin:12px 0">
+
+      <!-- Broken game reports section -->
+      <div style="padding:0 20px 4px">
+        <div style="font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+                    color:var(--text-muted,#666);margin-bottom:10px">🚩 Broken Game Reports</div>
+        <div id="reportsList"></div>
+        <button class="btn-clear-reports" id="clearReportsBtn" style="margin-top:10px;width:100%">🗑 Clear Reports</button>
+      </div>
     </div>
   </div>
 
@@ -848,9 +867,10 @@
     }
 
     // ─── Game request ─────────────────────────────────────────────────────────
-    // Set to a Google Form URL (or any URL) to send requests there.
-    // If null, requests are saved locally and shown as a thank-you message.
-    const REQUEST_URL = null;
+    // Paste your Discord webhook URL here to receive requests as Discord DMs.
+    // Get one: Discord server → channel settings → Integrations → Webhooks → New Webhook → Copy URL
+    // If null, requests are only saved locally (visible in the dev panel).
+    const REQUEST_WEBHOOK_URL = null;
 
     // ─── Featured game ────────────────────────────────────────────────────────
     const FEATURED_GAME = "Smash Karts";
@@ -1126,18 +1146,43 @@
       else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     });
 
-    // ─── Reports panel (master only) ─────────────────────────────────────────
-    if (isMaster()) {
+    // ─── Dev panel (dev key or master) ───────────────────────────────────────
+    if (isDev()) {
       const reportsBtn = document.getElementById("reportsBtn");
+      reportsBtn.textContent = "🛠️ Dev";
       reportsBtn.style.display = "";
 
-      reportsBtn.addEventListener("click", () => {
-        const reports = JSON.parse(localStorage.getItem("brokenReports") || "[]");
-        const list = document.getElementById("reportsList");
-        if (!reports.length) {
-          list.innerHTML = `<p class="reports-empty">No reports yet.</p>`;
+      function renderDevPanel() {
+        // Game requests
+        const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
+        const rList = document.getElementById("requestsList");
+        if (!reqs.length) {
+          rList.innerHTML = `<p class="reports-empty">No requests yet on this device.</p>`;
         } else {
-          list.innerHTML = reports.map((r, i) =>
+          rList.innerHTML = reqs.slice().reverse().map((r, i) =>
+            `<div class="report-item">
+              <span class="report-num">#${reqs.length - i}</span>
+              <div class="report-info">
+                <strong>${r.name}</strong>
+                <span class="report-time">${new Date(r.time).toLocaleString()}</span>
+              </div>
+            </div>`
+          ).join("");
+        }
+        // Webhook status
+        const ws = document.getElementById("webhookStatus");
+        ws.textContent = REQUEST_WEBHOOK_URL
+          ? "✓ Discord webhook active — all requests are sent to Discord in real time."
+          : "⚠ No webhook set. Requests only saved on the submitting device. Set REQUEST_WEBHOOK_URL in the script to receive them in Discord.";
+        ws.style.color = REQUEST_WEBHOOK_URL ? "#4ade80" : "#f97316";
+
+        // Broken game reports
+        const reports = JSON.parse(localStorage.getItem("brokenReports") || "[]");
+        const bList = document.getElementById("reportsList");
+        if (!reports.length) {
+          bList.innerHTML = `<p class="reports-empty">No broken game reports yet.</p>`;
+        } else {
+          bList.innerHTML = reports.map((r, i) =>
             `<div class="report-item">
               <span class="report-num">#${i + 1}</span>
               <div class="report-info">
@@ -1148,6 +1193,10 @@
             </div>`
           ).join("");
         }
+      }
+
+      reportsBtn.addEventListener("click", () => {
+        renderDevPanel();
         document.getElementById("reportsOverlay").style.display = "flex";
       });
 
@@ -1155,9 +1204,14 @@
         document.getElementById("reportsOverlay").style.display = "none";
       });
 
+      document.getElementById("clearRequestsBtn").addEventListener("click", () => {
+        localStorage.removeItem("sgGameRequests");
+        renderDevPanel();
+      });
+
       document.getElementById("clearReportsBtn").addEventListener("click", () => {
         localStorage.removeItem("brokenReports");
-        document.getElementById("reportsList").innerHTML = `<p class="reports-empty">No reports yet.</p>`;
+        renderDevPanel();
       });
     }
 
@@ -1190,24 +1244,23 @@
         const name = input.value.trim();
         if (!name) { msg.style.color = "#f87171"; msg.textContent = "Type a game name first!"; return; }
 
-        if (REQUEST_URL) {
-          // If a Google Form / external URL is configured, open it in a new tab.
-          // Append the game name as a query param if it looks like a Google Form.
-          const url = REQUEST_URL.includes('?')
-            ? REQUEST_URL + '&entry.0=' + encodeURIComponent(name)
-            : REQUEST_URL;
-          window.open(url, '_blank');
-          msg.style.color = "#4ade80";
-          msg.textContent = "✓ Form opened in a new tab!";
-        } else {
-          // No backend — save locally and thank the user.
-          const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
-          reqs.push({ name, time: new Date().toISOString() });
-          localStorage.setItem("sgGameRequests", JSON.stringify(reqs));
-          msg.style.color = "#4ade80";
-          msg.textContent = "✓ Got it! We'll try to add "" + name + "".";
-          input.value = "";
+        // Always save locally so the dev panel can show it on this device
+        const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
+        reqs.push({ name, time: new Date().toISOString() });
+        localStorage.setItem("sgGameRequests", JSON.stringify(reqs));
+
+        // If a Discord webhook is configured, POST to it silently
+        if (REQUEST_WEBHOOK_URL) {
+          fetch(REQUEST_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: "📬 **Game Request:** " + name, username: "Games Site" })
+          }).catch(() => {}); // never show errors to the user
         }
+
+        msg.style.color = "#4ade80";
+        msg.textContent = "✓ Got it! We'll try to add "" + name + "".";
+        input.value = "";
       });
 
       // Allow Enter to submit

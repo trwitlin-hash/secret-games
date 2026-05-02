@@ -45,9 +45,16 @@ async function tryUnlock(inputKey) {
 }
 
 const MASTER_HASH = "5e8ce5c5d088bc25b8308dba4c873ef24003cb42ffab8adcf7035eeee0bff5d4"; // OGSTUMPS
+const DEV_HASH    = "3c24a22bee85ee04968579c51f996bfe2e53b218a2bc1028e76492b417da4a83"; // KEY_748291047362
 
 function isMaster() {
   return sessionStorage.getItem(AUTH_KEY) === MASTER_HASH;
+}
+
+// Dev/tester key — can see requests panel + reports panel
+function isDev() {
+  const h = sessionStorage.getItem(AUTH_KEY);
+  return h === MASTER_HASH || h === DEV_HASH;
 }
 
 function lock() {
