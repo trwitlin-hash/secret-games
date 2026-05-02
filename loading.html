@@ -26,6 +26,7 @@
     <span class="topbar-logo">🎮 Games</span>
     <input type="text" class="search-bar" id="searchBar" placeholder="Search games..." autocomplete="off">
     <button class="btn-reports" id="reportsBtn" style="display:none">📋 Reports</button>
+    <button class="btn-request" id="requestBtn">📬 Request</button>
     <button class="btn-changelog" id="changelogBtn">📰 Changelog</button>
     <button class="btn-theme" id="themeBtn">🎨 Theme</button>
     <button class="btn-random" id="randomBtn">🎲 Random</button>
@@ -44,6 +45,34 @@
     </div>
   </div>
 
+  <!-- Request a game panel -->
+  <div class="reports-overlay" id="requestOverlay" style="display:none">
+    <div class="reports-panel" style="max-width:420px">
+      <div class="reports-header">
+        <span>📬 Request a Game</span>
+        <button class="btn-close" id="requestCloseBtn">✕ Close</button>
+      </div>
+      <div style="padding:20px 24px 24px">
+        <p style="color:var(--text-muted,#888);font-size:0.88rem;margin-bottom:14px;line-height:1.5">
+          Don't see a game you want? Type the name below and we'll try to add it.
+        </p>
+        <input type="text" id="requestInput" placeholder="e.g. Krunker, Friday Night Funkin…"
+          style="width:100%;padding:10px 12px;background:var(--surface2,#1c1a1a);border:1px solid var(--border,#333);
+                 border-radius:8px;color:var(--text,#fff);font-size:0.95rem;outline:none;box-sizing:border-box;margin-bottom:12px">
+        <button id="requestSubmitBtn"
+          style="width:100%;padding:10px;background:var(--accent,#f97316);color:#fff;border:none;
+                 border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">
+          Send Request
+        </button>
+        <p id="requestMsg" style="margin-top:10px;font-size:0.85rem;text-align:center;min-height:1.2em;color:#4ade80"></p>
+        <p style="margin-top:16px;font-size:0.78rem;color:var(--text-muted,#666);text-align:center">
+          💡 Tip: press <kbd style="background:var(--surface2,#222);border:1px solid var(--border,#444);
+          border-radius:4px;padding:1px 5px;font-size:0.78rem">` </kbd> (backtick, top-left) at any time to instantly hide the games.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- Changelog panel -->
   <div class="reports-overlay" id="changelogOverlay" style="display:none">
     <div class="reports-panel" style="max-width:540px;max-height:80vh;overflow-y:auto">
@@ -52,6 +81,12 @@
         <button class="btn-close" id="changelogCloseBtn">✕ Close</button>
       </div>
       <div class="changelog-body">
+
+        <div class="cl-entry">
+          <div class="cl-date">May 2026</div>
+          <div class="cl-tag cl-tag-new">🆕 New</div>
+          <p>3 multiplayer games added: <strong>Shell Shockers, 1v1.lol, Stumble Guys.</strong> Also added game request button — click 📬 in the top bar to request a game.</p>
+        </div>
 
         <div class="cl-entry">
           <div class="cl-date">April 2026</div>
@@ -470,6 +505,9 @@
       { name:"No Pain No Gain",         emoji:"🤸", cat:"action",   tier:"free", src:"games/no-pain-no-gain/index.html",                               desc:"Ragdoll sandbox chaos — fling, smash, and wreck your way through absurd obstacles." },
       { name:"Five Nights at Freddy's", emoji:"🐻", cat:"action",   tier:"pro",  src:"games/fnaf/index.html",                                          desc:"Survive the night shift at a haunted pizzeria. Watch the cameras." },
       { name:"Five Nights at Poppy",   emoji:"🌸", cat:"action",   tier:"pro",  src:"games/five-nights-at-poppy/index.html",                           desc:"A Poppy Playtime meets FNAF mashup — survive the night in Playtime Co.'s horror factory." },
+      { name:"Shell Shockers",          emoji:"🥚", cat:"action",   tier:"pro",  src:"games/shell-shockers/index.html",                                  desc:"Egg-based first-person shooter — crack your enemies before they crack you." },
+      { name:"1v1.lol",                 emoji:"🏗️", cat:"action",   tier:"pro",  src:"games/1v1-lol/index.html",                                        desc:"Build, edit, and eliminate — Fortnite-style combat in your browser." },
+      { name:"Stumble Guys",            emoji:"🏃", cat:"action",   tier:"pro",  src:"games/stumble-guys/index.html",                                    desc:"32-player knockout party — run, stumble, and survive the obstacle gauntlet." },
 
       // ── Shooting ──────────────────────────────────────────────────────────────
       { name:"FPS Strike",              emoji:"🎯", cat:"shooting", tier:"free", src:"games/fps-strike/index.html",                                    desc:"Counter-Strike-style first-person shooter with fast multiplayer action." },
@@ -809,6 +847,11 @@
       });
     }
 
+    // ─── Game request ─────────────────────────────────────────────────────────
+    // Set to a Google Form URL (or any URL) to send requests there.
+    // If null, requests are saved locally and shown as a thank-you message.
+    const REQUEST_URL = null;
+
     // ─── Featured game ────────────────────────────────────────────────────────
     const FEATURED_GAME = "Smash Karts";
     function buildFeaturedSection() {
@@ -1123,6 +1166,55 @@
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) document.title = "Google Classroom";
     });
+
+    // ─── Request a game ───────────────────────────────────────────────────────
+    (function() {
+      const overlay  = document.getElementById("requestOverlay");
+      const input    = document.getElementById("requestInput");
+      const msg      = document.getElementById("requestMsg");
+
+      document.getElementById("requestBtn").addEventListener("click", () => {
+        overlay.style.display = "flex";
+        msg.textContent = "";
+        input.value = "";
+        setTimeout(() => input.focus(), 80);
+      });
+      document.getElementById("requestCloseBtn").addEventListener("click", () => {
+        overlay.style.display = "none";
+      });
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) overlay.style.display = "none";
+      });
+
+      document.getElementById("requestSubmitBtn").addEventListener("click", () => {
+        const name = input.value.trim();
+        if (!name) { msg.style.color = "#f87171"; msg.textContent = "Type a game name first!"; return; }
+
+        if (REQUEST_URL) {
+          // If a Google Form / external URL is configured, open it in a new tab.
+          // Append the game name as a query param if it looks like a Google Form.
+          const url = REQUEST_URL.includes('?')
+            ? REQUEST_URL + '&entry.0=' + encodeURIComponent(name)
+            : REQUEST_URL;
+          window.open(url, '_blank');
+          msg.style.color = "#4ade80";
+          msg.textContent = "✓ Form opened in a new tab!";
+        } else {
+          // No backend — save locally and thank the user.
+          const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
+          reqs.push({ name, time: new Date().toISOString() });
+          localStorage.setItem("sgGameRequests", JSON.stringify(reqs));
+          msg.style.color = "#4ade80";
+          msg.textContent = "✓ Got it! We'll try to add "" + name + "".";
+          input.value = "";
+        }
+      });
+
+      // Allow Enter to submit
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") document.getElementById("requestSubmitBtn").click();
+      });
+    })();
 
     // ─── Changelog panel ──────────────────────────────────────────────────────
     document.getElementById("changelogBtn").addEventListener("click", () => {

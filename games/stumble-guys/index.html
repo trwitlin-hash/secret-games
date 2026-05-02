@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stumble Guys</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; background:#000; overflow:hidden; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+    #blocked { display:none; position:fixed; inset:0; background:#111; color:#fff;
+      font-family:sans-serif; flex-direction:column; align-items:center;
+      justify-content:center; gap:12px; text-align:center; padding:24px; }
+    #blocked h2 { font-size:1.4rem; }
+    #blocked p { color:#aaa; font-size:0.95rem; max-width:360px; }
+  </style>
+</head>
+<body>
+  <iframe id="frame" src="https://www.stumble-guys.com/"
+    allow="fullscreen *; gamepad *; autoplay *" allowfullscreen></iframe>
+  <div id="blocked">
+    <h2>🏃 Stumble Guys</h2>
+    <p>Couldn't load — your network might be blocking the game directly.<br>
+       Try switching to a different network or ask the site owner for a proxy link.</p>
+  </div>
+  <script>
+    const f = document.getElementById('frame');
+    f.addEventListener('error', () => {
+      f.style.display = 'none';
+      document.getElementById('blocked').style.display = 'flex';
+    });
+    f.addEventListener('load', () => {
+      try {
+        if (!f.contentDocument && !f.contentWindow) {
+          f.style.display = 'none';
+          document.getElementById('blocked').style.display = 'flex';
+        }
+      } catch(e) { /* cross-origin — game loaded */ }
+    });
+  </script>
+</body>
+</html>
