@@ -25,11 +25,19 @@
   <nav class="topbar">
     <span class="topbar-logo">🎮 Games</span>
     <input type="text" class="search-bar" id="searchBar" placeholder="Search games..." autocomplete="off">
-    <button class="btn-reports" id="reportsBtn" style="display:none">📋 Reports</button>
+    <button class="btn-reports" id="reportsBtn" style="display:none">🛠️ Dev</button>
     <button class="btn-request" id="requestBtn">📬 Request</button>
-    <button class="btn-changelog" id="changelogBtn">📰 Changelog</button>
-    <button class="btn-theme" id="themeBtn">🎨 Theme</button>
-    <button class="btn-random" id="randomBtn">🎲 Random</button>
+
+    <!-- Overflow menu -->
+    <div class="overflow-wrap" id="overflowWrap">
+      <button class="btn-overflow" id="overflowBtn" aria-label="More options">⋯</button>
+      <div class="overflow-menu" id="overflowMenu">
+        <button class="overflow-item" id="randomBtn">🎲 Random</button>
+        <button class="overflow-item" id="changelogBtn">📰 Changelog</button>
+        <button class="overflow-item" id="themeBtn">🎨 Theme</button>
+      </div>
+    </div>
+
     <button class="btn-lock" id="lockBtn">🔒 Lock</button>
   </nav>
 
@@ -1288,6 +1296,29 @@
       // Allow Enter to submit
       input.addEventListener("keydown", e => {
         if (e.key === "Enter") document.getElementById("requestSubmitBtn").click();
+      });
+    })();
+
+    // ─── Overflow menu ────────────────────────────────────────────────────────
+    (function() {
+      const btn  = document.getElementById("overflowBtn");
+      const menu = document.getElementById("overflowMenu");
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        const open = menu.classList.toggle("open");
+        btn.classList.toggle("open", open);
+      });
+      // Close when clicking anywhere outside
+      document.addEventListener("click", e => {
+        if (!document.getElementById("overflowWrap").contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("open");
+        }
+      });
+      // Close after an item is clicked (panel will open instead)
+      menu.addEventListener("click", () => {
+        menu.classList.remove("open");
+        btn.classList.remove("open");
       });
     })();
 
