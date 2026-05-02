@@ -820,11 +820,8 @@
       if (!g || (userTier !== 'pro' && g.tier === 'pro')) { sec.innerHTML = ''; return; }
       const collapsed = localStorage.getItem('sgFeaturedCollapsed') === '1';
       sec.innerHTML = `
-        <div class="featured-header">
-          <span class="featured-label">🌟 Featured Game</span>
-          <button class="section-toggle" id="featuredToggle">${collapsed ? '▶' : '▼'}</button>
-        </div>
-        <div class="featured-card" id="featuredCard" style="${collapsed ? 'display:none' : ''}">
+        ${collapsed ? `<button class="featured-show-btn" id="featuredToggle">🌟 Show Featured</button>` : `
+        <div class="featured-card" id="featuredCard">
           <div class="featured-emoji">${g.emoji}</div>
           <div class="featured-info">
             <div class="featured-name">${g.name}</div>
@@ -832,14 +829,18 @@
             <div class="featured-desc">${g.desc || ''}</div>
           </div>
           <button class="featured-play-btn">▶ Play Now</button>
-        </div>`;
-      document.getElementById('featuredCard').addEventListener('click', () => openGame(g));
-      document.getElementById('featuredToggle').addEventListener('click', () => {
-        const card = document.getElementById('featuredCard');
+          <button class="featured-hide-btn" id="featuredToggle">Hide</button>
+        </div>`}`;
+      if (!collapsed) {
+        document.getElementById('featuredCard').addEventListener('click', e => {
+          if (!e.target.closest('#featuredToggle')) openGame(g);
+        });
+      }
+      document.getElementById('featuredToggle').addEventListener('click', e => {
+        e.stopPropagation();
         const nowCollapsed = localStorage.getItem('sgFeaturedCollapsed') === '1';
         localStorage.setItem('sgFeaturedCollapsed', nowCollapsed ? '0' : '1');
-        card.style.display = nowCollapsed ? '' : 'none';
-        document.getElementById('featuredToggle').textContent = nowCollapsed ? '▼' : '▶';
+        buildFeaturedSection();
       });
     }
 

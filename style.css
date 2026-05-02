@@ -676,25 +676,19 @@ a:hover { text-decoration: underline; }
 
 /* Featured section */
 .featured-section { padding: 14px 20px 0; }
-.featured-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 0;
-}
 .featured-card {
   background: var(--surface);
   border: 1px solid var(--accent);
   border-radius: var(--radius);
-  padding: 16px 20px;
+  padding: 16px 20px 10px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 16px;
   cursor: pointer;
   transition: box-shadow 0.2s;
   box-shadow: inset 0 0 40px rgba(var(--accent-rgb), 0.06);
+  position: relative;
 }
 .featured-card:hover {
   box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(var(--accent-rgb), 0.2);
@@ -716,6 +710,34 @@ a:hover { text-decoration: underline; }
   flex-shrink: 0;
   pointer-events: none;
 }
+.featured-hide-btn {
+  width: 100%;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.04em;
+  transition: color 0.15s;
+  pointer-events: all;
+}
+.featured-hide-btn:hover { color: var(--text); }
+.featured-show-btn {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.15s, border-color 0.15s;
+}
+.featured-show-btn:hover { color: var(--accent); border-color: var(--accent); }
 
 /* Favorite button on cards */
 .fav-btn {
