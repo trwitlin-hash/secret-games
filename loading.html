@@ -867,10 +867,14 @@
     }
 
     // ─── Game request ─────────────────────────────────────────────────────────
-    // Paste your Discord webhook URL here to receive requests as Discord DMs.
-    // Get one: Discord server → channel settings → Integrations → Webhooks → New Webhook → Copy URL
-    // If null, requests are only saved locally (visible in the dev panel).
-    const REQUEST_WEBHOOK_URL = null;
+    // Paste your Firebase Realtime Database URL here (ending in /).
+    // Setup (free, ~3 min):
+    //   1. Go to console.firebase.google.com → Add project (any name)
+    //   2. Build → Realtime Database → Create database → Start in TEST mode
+    //   3. Copy the URL (looks like https://YOUR-PROJECT-default-rtdb.firebaseio.com/)
+    //   4. Paste it below.
+    // Test mode = anyone with the URL can read/write, which is fine for game requests.
+    const REQUEST_DB_URL = null; // e.g. "https://your-project-default-rtdb.firebaseio.com/"
 
     // ─── Featured game ────────────────────────────────────────────────────────
     const FEATURED_GAME = "Smash Karts";
@@ -1152,52 +1156,72 @@
       reportsBtn.textContent = "🛠️ Dev";
       reportsBtn.style.display = "";
 
-      function renderDevPanel() {
-        // Game requests
-        const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
-        const rList = document.getElementById("requestsList");
-        if (!reqs.length) {
-          rList.innerHTML = `<p class="reports-empty">No requests yet on this device.</p>`;
-        } else {
-          rList.innerHTML = reqs.slice().reverse().map((r, i) =>
-            `<div class="report-item">
-              <span class="report-num">#${reqs.length - i}</span>
-              <div class="report-info">
-                <strong>${r.name}</strong>
-                <span class="report-time">${new Date(r.time).toLocaleString()}</span>
-              </div>
-            </div>`
-          ).join("");
-        }
-        // Webhook status
-        const ws = document.getElementById("webhookStatus");
-        ws.textContent = REQUEST_WEBHOOK_URL
-          ? "✓ Discord webhook active — all requests are sent to Discord in real time."
-          : "⚠ No webhook set. Requests only saved on the submitting device. Set REQUEST_WEBHOOK_URL in the script to receive them in Discord.";
-        ws.style.color = REQUEST_WEBHOOK_URL ? "#4ade80" : "#f97316";
-
-        // Broken game reports
+      function renderBrokenReports() {
         const reports = JSON.parse(localStorage.getItem("brokenReports") || "[]");
         const bList = document.getElementById("reportsList");
-        if (!reports.length) {
-          bList.innerHTML = `<p class="reports-empty">No broken game reports yet.</p>`;
-        } else {
-          bList.innerHTML = reports.map((r, i) =>
-            `<div class="report-item">
-              <span class="report-num">#${i + 1}</span>
-              <div class="report-info">
-                <strong>${r.name}</strong>
-                <span class="report-url">${r.src}</span>
-                <span class="report-time">${new Date(r.time).toLocaleString()}</span>
-              </div>
-            </div>`
-          ).join("");
+        bList.innerHTML = !reports.length
+          ? `<p class="reports-empty">No broken game reports yet.</p>`
+          : reports.map((r, i) =>
+              `<div class="report-item">
+                <span class="report-num">#${i + 1}</span>
+                <div class="report-info">
+                  <strong>${r.name}</strong>
+                  <span class="report-url">${r.src}</span>
+                  <span class="report-time">${new Date(r.time).toLocaleString()}</span>
+                </div>
+              </div>`
+            ).join("");
+      }
+
+      function renderRequests(reqs) {
+        const rList = document.getElementById("requestsList");
+        if (!reqs.length) {
+          rList.innerHTML = `<p class="reports-empty">No requests yet.</p>`;
+          return;
         }
+        // Sort newest first
+        reqs.sort((a, b) => new Date(b.time) - new Date(a.time));
+        rList.innerHTML = reqs.map((r, i) =>
+          `<div class="report-item">
+            <span class="report-num">#${reqs.length - i}</span>
+            <div class="report-info">
+              <strong>${r.name}</strong>
+              <span class="report-time">${new Date(r.time).toLocaleString()}</span>
+            </div>
+          </div>`
+        ).join("");
+      }
+
+      function loadRequests() {
+        const rList = document.getElementById("requestsList");
+        const ws    = document.getElementById("webhookStatus");
+        if (!REQUEST_DB_URL) {
+          ws.textContent = "⚠ No database set up yet — requests are lost between devices. See the REQUEST_DB_URL comment in loading.html to connect Firebase (free, ~3 min).";
+          ws.style.color = "#f97316";
+          rList.innerHTML = `<p class="reports-empty">No database connected.</p>`;
+          return;
+        }
+        ws.textContent = "⏳ Loading…";
+        ws.style.color = "#888";
+        fetch(REQUEST_DB_URL + "requests.json")
+          .then(r => r.json())
+          .then(data => {
+            const reqs = data ? Object.values(data) : [];
+            renderRequests(reqs);
+            ws.textContent = "✓ Firebase connected — showing requests from all devices.";
+            ws.style.color = "#4ade80";
+          })
+          .catch(() => {
+            rList.innerHTML = `<p class="reports-empty">Failed to load — check your REQUEST_DB_URL.</p>`;
+            ws.textContent = "✗ Could not reach Firebase.";
+            ws.style.color = "#f87171";
+          });
       }
 
       reportsBtn.addEventListener("click", () => {
-        renderDevPanel();
         document.getElementById("reportsOverlay").style.display = "flex";
+        loadRequests();
+        renderBrokenReports();
       });
 
       document.getElementById("reportsCloseBtn").addEventListener("click", () => {
@@ -1205,13 +1229,16 @@
       });
 
       document.getElementById("clearRequestsBtn").addEventListener("click", () => {
-        localStorage.removeItem("sgGameRequests");
-        renderDevPanel();
+        if (!REQUEST_DB_URL) return;
+        if (!confirm("Delete ALL game requests? This cannot be undone.")) return;
+        fetch(REQUEST_DB_URL + "requests.json", { method: "DELETE" })
+          .then(() => loadRequests())
+          .catch(() => alert("Failed to delete — check REQUEST_DB_URL."));
       });
 
       document.getElementById("clearReportsBtn").addEventListener("click", () => {
         localStorage.removeItem("brokenReports");
-        renderDevPanel();
+        renderBrokenReports();
       });
     }
 
@@ -1244,22 +1271,17 @@
         const name = input.value.trim();
         if (!name) { msg.style.color = "#f87171"; msg.textContent = "Type a game name first!"; return; }
 
-        // Always save locally so the dev panel can show it on this device
-        const reqs = JSON.parse(localStorage.getItem("sgGameRequests") || "[]");
-        reqs.push({ name, time: new Date().toISOString() });
-        localStorage.setItem("sgGameRequests", JSON.stringify(reqs));
-
-        // If a Discord webhook is configured, POST to it silently
-        if (REQUEST_WEBHOOK_URL) {
-          fetch(REQUEST_WEBHOOK_URL, {
+        // Send to Firebase Realtime Database if configured (visible in dev panel from any device)
+        if (REQUEST_DB_URL) {
+          fetch(REQUEST_DB_URL + "requests.json", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: "📬 **Game Request:** " + name, username: "Games Site" })
+            body: JSON.stringify({ name, time: new Date().toISOString() })
           }).catch(() => {}); // never show errors to the user
         }
 
         msg.style.color = "#4ade80";
-        msg.textContent = "✓ Got it! We'll try to add "" + name + "".";
+        msg.textContent = "✓ Got it! We'll try to add \u201c" + name + "\u201d.";
         input.value = "";
       });
 
